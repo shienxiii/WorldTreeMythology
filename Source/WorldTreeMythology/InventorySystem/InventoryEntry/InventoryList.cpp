@@ -14,10 +14,13 @@ bool UInventoryList::Add(TSubclassOf<AInventory> InClass, uint8 InCount)
 	// If this list should hold unique entry, simply create a new entry
 	if (bUniqueEntries)
 	{
-		// Create new entry
-		int32 i = Inventory.Add(NewObject<UInventoryEntry>());
-		Inventory[i]->InitializeEntry(InClass, InCount);
+		for (int i = 0; i < InCount; i++)
+		{
+			// Create new entry
+			int32 x = Inventory.Add(NewObject<UInventoryEntry>());
 
+			Inventory[x]->InitializeEntry(InClass, InCount);
+		}
 		return true;
 	}
 
@@ -43,11 +46,22 @@ bool UInventoryList::Add(TSubclassOf<AInventory> InClass, uint8 InCount)
 	return true;
 }
 
+UInventoryEntry* UInventoryList::AddUnique(TSubclassOf<AInventory> InClass)
+{
+	if (!bUniqueEntries) { return nullptr; }
+
+	int32 i = Inventory.Add(NewObject<UInventoryEntry>());
+
+	Inventory[i]->InitializeEntry(InClass, 1);
+
+	return Inventory[i];
+}
+
 TArray<UInventoryEntry*> UInventoryList::QueryForSubclass(TSubclassOf<AInventory> InSubclass)
 {
 	if (InSubclass == NULL)
 	{
-		InSubclass = BaseClass;
+		InSubclass = BaseInventoryClass;
 	}
 	else if (!CanStore(InSubclass))
 	{
@@ -56,13 +70,18 @@ TArray<UInventoryEntry*> UInventoryList::QueryForSubclass(TSubclassOf<AInventory
 
 	return Inventory.FilterByPredicate([InSubclass](UInventoryEntry* entry)
 		{
-			return entry->GetInventoryClass().Get()->IsChildOf(InSubclass);
+			return entry->IsChildOf(InSubclass);
 		});
+}
+
+TArray<UInventoryEntry*> UInventoryList::CustomQuery_Implementation(uint8 InQueryEnum)
+{
+	return QueryForSubclass();
 }
 
 bool UInventoryList::CanStore(TSubclassOf<AInventory> InInventoryClass)
 {
-	if (InInventoryClass == BaseClass) { return true; }
+	if (InInventoryClass == BaseInventoryClass) { return true; }
 
-	return InInventoryClass.Get()->IsChildOf(BaseClass);
+	return InInventoryClass.Get()->IsChildOf(BaseInventoryClass);
 }

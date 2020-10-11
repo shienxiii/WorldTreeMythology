@@ -18,7 +18,7 @@ class WORLDTREEMYTHOLOGY_API UInventoryEntryDisplay : public UButtonMk2
 	GENERATED_BODY()
 	
 protected:
-	UPROPERTY(BlueprintReadOnly) UInventoryEntry* Entry = nullptr;
+	UPROPERTY(BlueprintReadOnly) UInventoryEntry* InventoryEntry = nullptr;
 	UPROPERTY(BlueprintReadOnly) int32 QueryIndex = 0;
 
 	FInventoryEntryEvent OnHovered;
@@ -29,8 +29,8 @@ public:
 	void SynchronizeProperties() override;
 
 	void SetQueryIndex(int32 InQueryIndex) { QueryIndex = InQueryIndex; }
-	void NativeRefresh(TArray<UInventoryEntry*> InQuery);
 
+	void NativeRefresh(TArray<UInventoryEntry*> InQuery);
 	/**
 	 * Blueprint event to run when the Entry property gets updated
 	 */

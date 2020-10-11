@@ -49,6 +49,16 @@ void UInventoryPage::SetPageNum(int32 InPageNum)
 	}
 }
 
+void UInventoryPage::RefreshPage(TArray<UInventoryEntry*> InQuery)
+{
+	TArray<UWidget*> entries = Panel->GetAllChildren();
+
+	for (int i = 0; i < entries.Num(); i++)
+	{
+		Cast<UInventoryEntryDisplay>(entries[i])->NativeRefresh(InQuery);
+	}
+}
+
 bool UInventoryPage::BindHoverDelegate(UObject* InObject, FName InFuncName)
 {
 	OnEntryHovered.Unbind();

@@ -16,8 +16,8 @@ class WORLDTREEMYTHOLOGY_API UInventoryEntry : public UObject
 	GENERATED_BODY()
 	
 protected:
-	TSubclassOf<AInventory> InventoryClass = NULL;
-	uint8 Count = 0;
+	UPROPERTY(BlueprintReadOnly) TSubclassOf<AInventory> InventoryClass = NULL;
+	UPROPERTY(BlueprintReadOnly) uint8 Count = 0;
 
 public:
 	/**
@@ -29,4 +29,5 @@ public:
 	void Add(uint8 InCount) { Count += InCount; }
 
 	TSubclassOf<AInventory> GetInventoryClass() { return InventoryClass; }
+	bool IsChildOf(TSubclassOf<AInventory> InBaseClass);
 };

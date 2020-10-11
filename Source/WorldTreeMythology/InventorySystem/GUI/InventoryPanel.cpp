@@ -73,24 +73,41 @@ UWidget* UInventoryPanel::AddInventoryWidget()
 	return widget;
 }
 
-TArray<UInventoryEntry*> UInventoryPanel::QueryForSubclass()
+void UInventoryPanel::QueryFor(TSubclassOf<AInventory> InSubclass)
 {
-	return QueryForSubclass(QueryBaseClass);
+	if (!InventoryComponent) { return; }
+
+	if (InSubclass == NULL) { InSubclass = DefaultQueriedSubclass; }
+
+	TArray<UInventoryEntry*> entries = InventoryComponent->QueryForSubclass(InSubclass);
+
+	RefreshPanel(entries);
 }
 
-TArray<UInventoryEntry*> UInventoryPanel::QueryForSubclass(TSubclassOf<AInventory> InSubclass)
+void UInventoryPanel::FilteredQuery(TSubclassOf<AInventory> InSubclass, uint8 InFilterEnum)
 {
-	if (!InSubclass || !InventoryComponent)
+	if (!InventoryComponent) { return; }
+
+	if (InSubclass == NULL) { InSubclass = DefaultQueriedSubclass; }
+
+	RefreshPanel(InventoryComponent->FilteredQuery(InSubclass, InFilterEnum));
+}
+
+void UInventoryPanel::RefreshPanel(TArray<UInventoryEntry*> InQueriedInventory)
+{
+	TArray<UWidget*> widgets = Panel->GetAllChildren();
+
+	for (UWidget* widget : widgets)
 	{
-		return TArray<UInventoryEntry*>();
+		if (InventoryWidget->IsChildOf(UInventoryPage::StaticClass()))
+		{
+			Cast<UInventoryPage>(widget)->RefreshPage(InQueriedInventory);
+		}
+		else
+		{
+			Cast<UInventoryEntryDisplay>(widget)->NativeRefresh(InQueriedInventory);
+		}
 	}
-
-	return InventoryComponent->QueryForSubclass(InSubclass);
-}
-
-TArray<UInventoryEntry*> UInventoryPanel::QueryForSubclass(TSubclassOf<AInventory> InSubclass, uint8 InQueryType)
-{
-	return TArray<UInventoryEntry*>();
 }
 
 UWidget* UInventoryPanel::NavigateWidget(EUINavigation InNavigation)

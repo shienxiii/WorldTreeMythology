@@ -38,10 +38,14 @@ protected:
 	UInventoryComponent* InventoryComponent;
 
 	// This is the class this InventoryPanel will query for by default
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Panel Setup") TSubclassOf<AInventory> QueryBaseClass = NULL;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Panel Setup") TSubclassOf<AInventory> DefaultQueriedSubclass = NULL;
 
 	// If Panel is a ScrollBox, this variable will point to it to avoid the need to check it everytime there is a need to perform any ScrollBox action
 	UScrollBox* ScrollPanel = nullptr;
+
+public:
+	/*UPROPERTY(BlueprintAssignable) FInventoryEntryEvent OnEntryHovered;
+	UPROPERTY(BlueprintAssignable) FInventoryEntryEvent OnEntryClicked;*/
 
 public:
 	void NativeOnInitialized() override;
@@ -51,11 +55,12 @@ public:
 	UWidget* AddInventoryWidget();
 
 	UFUNCTION(BlueprintCallable) void SetInventoryComponent(UInventoryComponent* InInventoryComponent) { InventoryComponent = InInventoryComponent; }
-	UFUNCTION(BlueprintCallable) void SetQueryBaseClass(TSubclassOf<AInventory> InBaseClass) { QueryBaseClass = InBaseClass; }
+	//UFUNCTION(BlueprintCallable) void SetDefaultQueriedClass(TSubclassOf<AInventory> InBaseClass) { DefaultQueriedSubclass = InBaseClass; }
 
-	TArray<UInventoryEntry*> QueryForSubclass();
-	TArray<UInventoryEntry*> QueryForSubclass(TSubclassOf<AInventory> InSubclass);
-	TArray<UInventoryEntry*> QueryForSubclass(TSubclassOf<AInventory> InSubclass, uint8 InQueryType);
+
+	UFUNCTION(BlueprintCallable) void QueryFor(TSubclassOf<AInventory> InSubclass = NULL);
+	UFUNCTION(BlueprintCallable) void FilteredQuery(TSubclassOf<AInventory> InSubclass = NULL, uint8 InFilterEnum = 0);
+	void RefreshPanel(TArray<UInventoryEntry*> InQueriedInventory);
 
 
 	virtual UWidget* NavigateWidget(EUINavigation InNavigation) override;

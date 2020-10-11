@@ -17,30 +17,58 @@ UInventoryComponent::UInventoryComponent()
 void UInventoryComponent::InitializeComponent()
 {
 	Super::InitializeComponent();
+}
 
-	// Initialize all the InventoryList set for this InventoryComponent
-	for (TSubclassOf<UInventoryList> list : InventoryListType)
-	{
-		Inventory.Add(NewObject<UInventoryList>((UObject*)GetTransientPackage(), list));
-	}
+void UInventoryComponent::AddInventoryListType(TSubclassOf<UInventoryList> InInventoryList)
+{
+	if (!InInventoryList) { return; }
+
+	Inventory.Add(NewObject<UInventoryList>((UObject*)GetTransientPackage(), InInventoryList));
+}
+
+bool UInventoryComponent::AddToInventory(TSubclassOf<AInventory> InInventory, uint8 InCount)
+{
+	UInventoryList* list = GetInventoryListFor(InInventory);
+
+	if (!list) { return false; }
+
+	return list->Add(InInventory, InCount);
+}
+
+UInventoryEntry* UInventoryComponent::AddUniqueToInventory(AInventory* InInventory)
+{
+	UInventoryList* list = GetInventoryListFor(InInventory->GetClass());
+
+	if (!list) { return nullptr; }
+
+	return list->AddUnique(InInventory->GetClass());
 }
 
 TArray<UInventoryEntry*> UInventoryComponent::QueryForSubclass(TSubclassOf<AInventory> InSubclass)
 {
-	int32 i = IndexOfList(InSubclass);
+	UInventoryList* list = GetInventoryListFor(InSubclass);
 
-	if (i == INDEX_NONE) { return TArray<UInventoryEntry*>(); }
+	if (!list) { return TArray<UInventoryEntry*>(); }
 
-	return Inventory[i]->QueryForSubclass(InSubclass);
+	return list->QueryForSubclass(InSubclass);
 }
 
-TArray<UInventoryEntry*> UInventoryComponent::CustomQuery(TSubclassOf<AInventory> InInventoryClass, uint8 InQueryType)
+TArray<UInventoryEntry*> UInventoryComponent::FilteredQuery(TSubclassOf<AInventory> InInventoryClass, uint8 InQueryFilter)
+{
+	UInventoryList* list = GetInventoryListFor(InInventoryClass);
+
+	if (!list) { return TArray<UInventoryEntry*>(); }
+
+	return list->CustomQuery(InQueryFilter);
+}
+
+UInventoryList* UInventoryComponent::GetInventoryListFor(TSubclassOf<AInventory> InInventoryClass)
 {
 	int32 i = IndexOfList(InInventoryClass);
 
-	if (i == INDEX_NONE) { return TArray<UInventoryEntry*>(); }
+	if (i == INDEX_NONE) { return nullptr; }
 
-	return Inventory[i]->CustomQuery(InQueryType);
+	return Inventory[i];
 }
 
 int32 UInventoryComponent::IndexOfList(TSubclassOf<AInventory> InInventoryClass)

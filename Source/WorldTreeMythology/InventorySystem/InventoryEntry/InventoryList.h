@@ -16,10 +16,10 @@ class WORLDTREEMYTHOLOGY_API UInventoryList : public UObject
 	GENERATED_BODY()
 	
 protected:
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Inventory") TArray<UInventoryEntry*> Inventory;
+	UPROPERTY(BlueprintReadOnly, Category = "Inventory") TArray<UInventoryEntry*> Inventory;
 
 	// This field defines the base class of the managed Inventory class, Add() will test against this class to determine whether to accept or reject the incoming Inventory object
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Inventory") TSubclassOf<AInventory> BaseClass;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Inventory") TSubclassOf<AInventory> BaseInventoryClass;
 
 	/**
 	 * Determines whether the copies of the same Inventory class will be grouped in the same entry.
@@ -28,7 +28,18 @@ protected:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Inventory") bool bUniqueEntries = false;
 
 public:
-	UFUNCTION() bool Add(TSubclassOf<AInventory> InClass, uint8 InCount = 1);
+	/**
+	 * Adds InCount number of the passed Inventory class and returns true if successful.
+	 * Inventory objects are added in their default state. To store unique traits of each Inventory object, use AddUnique()
+	 */
+	UFUNCTION(BlueprintCallable) bool Add(TSubclassOf<AInventory> InClass, uint8 InCount = 1);
+
+	/**
+	 * Adds a single unique entry for the passed Inventory class and returns a pointer to the entry.
+	 * 
+	 * bUniqueEntries must be true
+	 */
+	UFUNCTION(BlueprintCallable) UInventoryEntry* AddUnique(TSubclassOf<AInventory> InClass);
 
 	/**
 	 * Queries the list for Inventory that are derived from a subclass, which is derived from BaseClass
@@ -37,9 +48,9 @@ public:
 	 */
 	TArray<UInventoryEntry*> QueryForSubclass(TSubclassOf<AInventory> InSubclass = NULL);
 
+	UFUNCTION(BlueprintNativeEvent) TArray<UInventoryEntry*> CustomQuery(uint8 InQueryEnum);
 	
-	UFUNCTION(BlueprintImplementableEvent) TArray<UInventoryEntry*> CustomQuery(uint8 InQueryEnum);
+	UFUNCTION(BlueprintPure) TSubclassOf<AInventory> GetBaseInventoryClass() { return BaseInventoryClass; }
 
-	UFUNCTION() TSubclassOf<AInventory> GetBaseClass() { return BaseClass; }
 	bool CanStore(TSubclassOf<AInventory> InInventoryClass);
 };

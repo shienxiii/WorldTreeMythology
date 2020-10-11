@@ -18,20 +18,39 @@ class WORLDTREEMYTHOLOGY_API UInventoryComponent : public UActorComponent
 
 protected:
 	// Determines all the InventoryList that this InventoryComponent will have
-	UPROPERTY(EditAnywhere, Category = "Initialization") TArray<TSubclassOf<UInventoryList>> InventoryListType;
+	//TArray<TSubclassOf<UInventoryList>> InventoryListType;
 
 	// Array of InventoryList managed by this class. Set which InventoryList will go here on InventoryListType 
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Inventory") TArray<UInventoryList*> Inventory;
+	UPROPERTY(BlueprintReadOnly, Category = "Inventory") TArray<UInventoryList*> Inventory;
 public:	
 	// Sets default values for this component's properties
 	UInventoryComponent();
 	void InitializeComponent() override;
+
+	// Call at Construct script to initialize the InventoryList this InventoryComponent will have
+	UFUNCTION(BlueprintCallable) void AddInventoryListType(TSubclassOf<UInventoryList> InInventoryList);
 	
+	/**
+	 * Add Inventory to it's respective list. Added Inventory will be in their default base form.
+	 * Use AddUniqueToInventory() instead, which will return the InventoryEntry created to add unique traits
+	 * 
+	 * @return true if successfully added to Inventory
+	 */
+	UFUNCTION(BlueprintCallable) bool AddToInventory(TSubclassOf<AInventory> InInventory, uint8 InCount = 1);
+
+
+	/**
+	 * Adds a single unique entry for the passed Inventory class and returns a reference to the entry.
+	 *
+	 * @return Reference to the InventoryEntry class created
+	 */
+	UFUNCTION(BlueprintCallable) UInventoryEntry* AddUniqueToInventory(AInventory* InInventory);
 
 #pragma region InventoryList
 	UFUNCTION(BlueprintPure) TArray<UInventoryEntry*> QueryForSubclass(TSubclassOf<AInventory> InSubclass);
-	UFUNCTION(BlueprintPure) TArray<UInventoryEntry*> CustomQuery(TSubclassOf<AInventory> InInventoryClass, uint8 InQueryType);
+	UFUNCTION(BlueprintPure) TArray<UInventoryEntry*> FilteredQuery(TSubclassOf<AInventory> InInventoryClass, uint8 InQueryFilter);
 
+	UFUNCTION(BlueprintPure) UInventoryList* GetInventoryListFor(TSubclassOf<AInventory> InInventoryClass);
 	/**
 	 * Gets the index of the InventoryList that can store Inventory of class InInventoryClass
 	 * 

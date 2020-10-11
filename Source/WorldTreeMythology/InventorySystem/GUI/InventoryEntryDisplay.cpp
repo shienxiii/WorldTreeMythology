@@ -27,7 +27,14 @@ void UInventoryEntryDisplay::SynchronizeProperties()
 
 void UInventoryEntryDisplay::NativeRefresh(TArray<UInventoryEntry*> InQuery)
 {
-	Entry = InQuery[QueryIndex];
+	if (QueryIndex >= InQuery.Num())
+	{
+		InventoryEntry = nullptr;
+	}
+	else
+	{
+		InventoryEntry = InQuery[QueryIndex];
+	}
 
 	OnRefresh();
 }
@@ -52,10 +59,10 @@ bool UInventoryEntryDisplay::BindClickDelegate(UObject* InObject, FName InFuncNa
 
 void UInventoryEntryDisplay::NativeHoverEvent()
 {
-	OnHovered.ExecuteIfBound(Entry);
+	OnHovered.ExecuteIfBound(InventoryEntry);
 }
 
 void UInventoryEntryDisplay::NativeClickEvent()
 {
-	OnClicked.ExecuteIfBound(Entry);
+	OnClicked.ExecuteIfBound(InventoryEntry);
 }

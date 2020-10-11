@@ -31,6 +31,8 @@ public:
 	void BuildPage();
 	void SetPageNum(int32 InPageNum);
 
+	void RefreshPage(TArray<UInventoryEntry*> InQuery);
+
 	bool BindHoverDelegate(UObject* InObject, FName InFuncName);
 	bool BindClickDelegate(UObject* InObject, FName InFuncName);
 
