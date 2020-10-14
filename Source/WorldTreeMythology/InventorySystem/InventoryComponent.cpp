@@ -26,7 +26,7 @@ void UInventoryComponent::AddInventoryListType(TSubclassOf<UInventoryList> InInv
 	Inventory.Add(NewObject<UInventoryList>((UObject*)GetTransientPackage(), InInventoryList));
 }
 
-bool UInventoryComponent::AddToInventory(TSubclassOf<AInventory> InInventory, uint8 InCount)
+bool UInventoryComponent::AddSubclassToInventory(TSubclassOf<AInventory> InInventory, uint8 InCount)
 {
 	UInventoryList* list = GetInventoryListFor(InInventory);
 
@@ -35,11 +35,17 @@ bool UInventoryComponent::AddToInventory(TSubclassOf<AInventory> InInventory, ui
 	return list->Add(InInventory, InCount);
 }
 
-UInventoryEntry* UInventoryComponent::AddUniqueToInventory(AInventory* InInventory)
+UInventoryEntry* UInventoryComponent::AddActorToInventory(AInventory* InInventory)
 {
 	UInventoryList* list = GetInventoryListFor(InInventory->GetClass());
 
 	if (!list) { return nullptr; }
+
+	if (!list->IsUniqueEntriesList())
+	{
+		AddSubclassToInventory(InInventory->StaticClass(), 1);
+		return nullptr;
+	}
 
 	return list->AddUnique(InInventory->GetClass());
 }
@@ -53,13 +59,13 @@ TArray<UInventoryEntry*> UInventoryComponent::QueryForSubclass(TSubclassOf<AInve
 	return list->QueryForSubclass(InSubclass);
 }
 
-TArray<UInventoryEntry*> UInventoryComponent::FilteredQuery(TSubclassOf<AInventory> InInventoryClass, uint8 InQueryFilter)
+TArray<UInventoryEntry*> UInventoryComponent::FilteredQuery(TSubclassOf<AInventory> InInventoryClass, uint8 InQueryEnum)
 {
 	UInventoryList* list = GetInventoryListFor(InInventoryClass);
 
 	if (!list) { return TArray<UInventoryEntry*>(); }
 
-	return list->CustomQuery(InQueryFilter);
+	return list->CustomQuery(InQueryEnum);
 }
 
 UInventoryList* UInventoryComponent::GetInventoryListFor(TSubclassOf<AInventory> InInventoryClass)

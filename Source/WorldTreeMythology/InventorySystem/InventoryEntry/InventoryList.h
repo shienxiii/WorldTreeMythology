@@ -16,9 +16,11 @@ class WORLDTREEMYTHOLOGY_API UInventoryList : public UObject
 	GENERATED_BODY()
 	
 protected:
+	// This is the array or list storing all the InventoryEntry
 	UPROPERTY(BlueprintReadOnly, Category = "Inventory") TArray<UInventoryEntry*> Inventory;
 
-	// This field defines the base class of the managed Inventory class, Add() will test against this class to determine whether to accept or reject the incoming Inventory object
+	// The base class of all Inventory object that this class will store.
+	// Only classes that inherited from this base class can be stored
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Inventory") TSubclassOf<AInventory> BaseInventoryClass;
 
 	/**
@@ -37,9 +39,14 @@ public:
 	/**
 	 * Adds a single unique entry for the passed Inventory class and returns a pointer to the entry.
 	 * 
+	 * NOTE TO SELF: make BlueprintNativeEvent
 	 * bUniqueEntries must be true
 	 */
 	UFUNCTION(BlueprintCallable) UInventoryEntry* AddUnique(TSubclassOf<AInventory> InClass);
+
+	// Checks if this bUniqueEntries is true
+	UFUNCTION(BlueprintCallable) bool IsUniqueEntriesList() { return bUniqueEntries; }
+
 
 	/**
 	 * Queries the list for Inventory that are derived from a subclass, which is derived from BaseClass
@@ -48,9 +55,21 @@ public:
 	 */
 	TArray<UInventoryEntry*> QueryForSubclass(TSubclassOf<AInventory> InSubclass = NULL);
 
+	/**
+	 * BP overriden function to allow custom made query to work seamlessly with InventoryComponent
+	 * 
+	 * @param InQueryEnum The enum for the custom query in uint8 type
+	 */
 	UFUNCTION(BlueprintNativeEvent) TArray<UInventoryEntry*> CustomQuery(uint8 InQueryEnum);
 	
+	/**
+	 * Gets the base class that all objects
+	 */
 	UFUNCTION(BlueprintPure) TSubclassOf<AInventory> GetBaseInventoryClass() { return BaseInventoryClass; }
 
-	bool CanStore(TSubclassOf<AInventory> InInventoryClass);
+
+	/**
+	 * Checks to see if the passed class type can be stored in this InventoryList
+	 */
+	UFUNCTION(BlueprintCallable) bool CanStore(TSubclassOf<AInventory> InInventoryClass);
 };

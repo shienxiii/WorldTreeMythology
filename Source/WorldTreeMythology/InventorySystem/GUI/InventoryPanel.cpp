@@ -14,7 +14,7 @@ void UInventoryPanel::NativeOnInitialized()
 	// Attempt to cast the Panel as a ScrollBox
 	ScrollPanel = Cast<UScrollBox>(Panel);
 
-	BuildPanel();
+	InitializePanel();
 
 }
 
@@ -24,11 +24,11 @@ void UInventoryPanel::SynchronizeProperties()
 
 	if (bIsEditor)
 	{
-		BuildPanel();
+		InitializePanel();
 	}
 }
 
-void UInventoryPanel::BuildPanel()
+void UInventoryPanel::InitializePanel()
 {
 	Panel->ClearChildren();
 
@@ -145,9 +145,11 @@ void UInventoryPanel::SetLastFocusedChild(UWidget* InWidget)
 void UInventoryPanel::NativeEntryHoverEvent(UInventoryEntry* InEntry)
 {
 	EntryHoverEvent(InEntry);
+	OnEntryHovered.Broadcast(InEntry);
 }
 
 void UInventoryPanel::NativeEntryClickEvent(UInventoryEntry* InEntry)
 {
 	EntryClickEvent(InEntry);
+	OnEntryClicked.Broadcast(InEntry);
 }

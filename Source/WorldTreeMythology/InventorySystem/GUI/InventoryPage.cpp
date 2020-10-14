@@ -8,7 +8,7 @@ void UInventoryPage::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
-	BuildPage();
+	InitializePage();
 }
 
 void UInventoryPage::SynchronizeProperties()
@@ -17,12 +17,12 @@ void UInventoryPage::SynchronizeProperties()
 
 	if (bIsEditor)
 	{
-		// Run BuildPage() for editor preview
-		BuildPage();
+		// Run InitializePage() for editor preview
+		InitializePage();
 	}
 }
 
-void UInventoryPage::BuildPage()
+void UInventoryPage::InitializePage()
 {
 	if (!EntryClass) { return; }
 

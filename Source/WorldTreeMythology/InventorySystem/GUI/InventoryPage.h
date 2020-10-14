@@ -28,7 +28,7 @@ protected:
 public:
 	void NativeOnInitialized() override;
 	void SynchronizeProperties() override;
-	void BuildPage();
+	void InitializePage();
 	void SetPageNum(int32 InPageNum);
 
 	void RefreshPage(TArray<UInventoryEntry*> InQuery);

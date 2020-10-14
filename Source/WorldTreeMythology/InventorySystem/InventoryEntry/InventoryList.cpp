@@ -68,6 +68,7 @@ TArray<UInventoryEntry*> UInventoryList::QueryForSubclass(TSubclassOf<AInventory
 		return TArray<UInventoryEntry*>();
 	}
 
+
 	return Inventory.FilterByPredicate([InSubclass](UInventoryEntry* entry)
 		{
 			return entry->IsChildOf(InSubclass);

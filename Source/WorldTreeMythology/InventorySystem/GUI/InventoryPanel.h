@@ -8,6 +8,9 @@
 #include "../InventoryComponent.h"
 #include "InventoryPanel.generated.h"
 
+// This delegate is specifically declared to be used in BP to allow BP users to add delegate call to an InventoryPanel in when it is used in another UserWidget
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInventoryEntryBPEvent, UInventoryEntry*, InEntry);
+
 class UScrollBox;
 
 /**
@@ -38,24 +41,25 @@ protected:
 	UInventoryComponent* InventoryComponent;
 
 	// This is the class this InventoryPanel will query for by default
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Panel Setup") TSubclassOf<AInventory> DefaultQueriedSubclass = NULL;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Panel Setup") TSubclassOf<AInventory> DefaultQueriedSubclass = AInventory::StaticClass();
 
 	// If Panel is a ScrollBox, this variable will point to it to avoid the need to check it everytime there is a need to perform any ScrollBox action
 	UScrollBox* ScrollPanel = nullptr;
 
 public:
-	/*UPROPERTY(BlueprintAssignable) FInventoryEntryEvent OnEntryHovered;
-	UPROPERTY(BlueprintAssignable) FInventoryEntryEvent OnEntryClicked;*/
+	UPROPERTY(BlueprintAssignable) FInventoryEntryBPEvent OnEntryHovered;
+	UPROPERTY(BlueprintAssignable) FInventoryEntryBPEvent OnEntryClicked;
 
 public:
 	void NativeOnInitialized() override;
 	void SynchronizeProperties() override;
 
-	void BuildPanel();
+
+	void InitializePanel();
 	UWidget* AddInventoryWidget();
 
 	UFUNCTION(BlueprintCallable) void SetInventoryComponent(UInventoryComponent* InInventoryComponent) { InventoryComponent = InInventoryComponent; }
-	//UFUNCTION(BlueprintCallable) void SetDefaultQueriedClass(TSubclassOf<AInventory> InBaseClass) { DefaultQueriedSubclass = InBaseClass; }
+	UFUNCTION(BlueprintCallable) void SetDefaultQueriedClass(TSubclassOf<AInventory> InBaseClass) { DefaultQueriedSubclass = InBaseClass; }
 
 
 	UFUNCTION(BlueprintCallable) void QueryFor(TSubclassOf<AInventory> InSubclass = NULL);
