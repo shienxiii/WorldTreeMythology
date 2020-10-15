@@ -29,6 +29,8 @@ public:
 	void NativeOnInitialized() override;
 	void SynchronizeProperties() override;
 	void InitializePage();
+
+	uint8 GetEntryCount() { return EntryCount; }
 	void SetPageNum(int32 InPageNum);
 
 	void RefreshPage(TArray<UInventoryEntry*> InQuery);

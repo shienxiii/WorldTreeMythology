@@ -64,7 +64,20 @@ public:
 
 	UFUNCTION(BlueprintCallable) void QueryFor(TSubclassOf<AInventory> InSubclass = NULL);
 	UFUNCTION(BlueprintCallable) void FilteredQuery(TSubclassOf<AInventory> InSubclass = NULL, uint8 InFilterEnum = 0);
-	void RefreshPanel(TArray<UInventoryEntry*> InQueriedInventory);
+
+	/**
+	 * Refresh this InventoryPanel to display a newly queried Inventory
+	 * 
+	 * @param InQueriedInventory The queried InventoryEntries to display
+	 */
+	void RefreshPanel(TArray<UInventoryEntry*>& InQueriedInventory);
+
+	/**
+	 * Add or remove children under Panel to fit the number of items queried
+	 * 
+	 * @param InQueriedInventory The queried InventoryEntries
+	 */
+	void ResizePanel(TArray<UInventoryEntry*> InQueriedInventory);
 
 
 	virtual UWidget* NavigateWidget(EUINavigation InNavigation) override;

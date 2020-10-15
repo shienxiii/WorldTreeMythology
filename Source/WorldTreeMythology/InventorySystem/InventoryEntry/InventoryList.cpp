@@ -82,7 +82,5 @@ TArray<UInventoryEntry*> UInventoryList::CustomQuery_Implementation(uint8 InQuer
 
 bool UInventoryList::CanStore(TSubclassOf<AInventory> InInventoryClass)
 {
-	if (InInventoryClass == BaseInventoryClass) { return true; }
-
 	return InInventoryClass.Get()->IsChildOf(BaseInventoryClass);
 }

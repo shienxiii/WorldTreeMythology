@@ -90,24 +90,64 @@ void UInventoryPanel::FilteredQuery(TSubclassOf<AInventory> InSubclass, uint8 In
 
 	if (InSubclass == NULL) { InSubclass = DefaultQueriedSubclass; }
 
-	RefreshPanel(InventoryComponent->FilteredQuery(InSubclass, InFilterEnum));
+	TArray<UInventoryEntry*> entries = InventoryComponent->FilteredQuery(InSubclass, InFilterEnum);
+
+	RefreshPanel(entries);
 }
 
-void UInventoryPanel::RefreshPanel(TArray<UInventoryEntry*> InQueriedInventory)
+void UInventoryPanel::RefreshPanel(TArray<UInventoryEntry*>& InQueriedInventory)
 {
 	TArray<UWidget*> widgets = Panel->GetAllChildren();
 
+	ResizePanel(InQueriedInventory);
+
 	for (UWidget* widget : widgets)
 	{
-		if (InventoryWidget->IsChildOf(UInventoryPage::StaticClass()))
+		if (InventoryWidget->IsChildOf<UInventoryPage>())
 		{
 			Cast<UInventoryPage>(widget)->RefreshPage(InQueriedInventory);
 		}
-		else
+		else if (InventoryWidget.Get()->IsChildOf<UInventoryEntryDisplay>())
 		{
 			Cast<UInventoryEntryDisplay>(widget)->NativeRefresh(InQueriedInventory);
 		}
 	}
+}
+
+void UInventoryPanel::ResizePanel(TArray<UInventoryEntry*> InQueriedInventory)
+{
+	int32 queryCount = InQueriedInventory.Num();
+
+	// Required children count will be equal to queryCount if Panel children are InventoryEntryDisplay
+	int32 requiredChildrenCount = queryCount;
+
+	// If Panel children are InventoryPage, recalculate the required number of children
+	if (InventoryWidget.Get()->IsChildOf<UInventoryPage>())
+	{
+		UInventoryPage* page = Cast<UInventoryPage>(InventoryWidget.GetDefaultObject());
+
+		requiredChildrenCount = queryCount / page->GetEntryCount();
+
+		requiredChildrenCount += ((queryCount % page->GetEntryCount()) > 0) ? 1 : 0;
+	}
+
+	if(requiredChildrenCount < Panel->GetChildrenCount())
+	{
+		// Panel is oversized
+		while (requiredChildrenCount < Panel->GetChildrenCount() && Panel->GetChildrenCount() > MinCount)
+		{
+			Panel->RemoveChildAt(Panel->GetChildrenCount() - 1);
+		}
+	}
+	else if (requiredChildrenCount > Panel->GetChildrenCount())
+	{
+		//  Panel is undersized
+		while (requiredChildrenCount > Panel->GetChildrenCount())
+		{
+			AddChildToPanel(InventoryWidget);
+		}
+	}
+
 }
 
 UWidget* UInventoryPanel::NavigateWidget(EUINavigation InNavigation)
