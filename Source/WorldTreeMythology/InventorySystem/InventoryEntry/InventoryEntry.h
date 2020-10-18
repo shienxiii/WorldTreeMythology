@@ -29,5 +29,6 @@ public:
 	void Add(uint8 InCount) { Count += InCount; }
 
 	TSubclassOf<AInventory> GetInventoryClass() { return InventoryClass; }
+	AInventory* GetInventoryDefault() { return InventoryClass.GetDefaultObject(); }
 	bool IsChildOf(TSubclassOf<AInventory> InBaseClass);
 };

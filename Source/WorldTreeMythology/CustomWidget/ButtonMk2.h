@@ -21,13 +21,20 @@ class WORLDTREEMYTHOLOGY_API UButtonMk2 : public UWidgetMk2
 	
 protected:
 	// This is the C++ managed Button
-	UPROPERTY(meta = (BindWidget)) UButton* CPP_Button;
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget)) UButton* CPP_Button;
 
 	// This is the default button style set on the BP side
 	FButtonStyle DefaultStyle;
 
 	// This is the style to be swapped to when focused
 	FButtonStyle FocusedStyle;
+
+	FButtonStyle* CurrentStyle;
+
+	UMaterialInstanceDynamic* NormalMatDynamic;
+	UMaterialInstanceDynamic* FocusedMatDynamic;
+	UMaterialInstanceDynamic* ClickMatDynamic;
+
 
 	/**
 	 * Used specifically to prevent SynchronizeProperties from running specific code during runtime.
@@ -39,9 +46,12 @@ protected:
 public:
 	UButtonMk2(const FObjectInitializer& ObjectInitializer);
 
+
 	void NativeOnInitialized() override;
 	void NativeOnAddedToFocusPath(const FFocusEvent& InFocusEvent) override;
 	void NativeOnRemovedFromFocusPath(const FFocusEvent& InFocusEvent) override;
+
+	void SetTextureParameter(FName ParamName, UTexture* InTexture);
 
 	FReply NativeOnFocusReceived(const FGeometry& InGeometry, const FFocusEvent& InFocusEvent) override;
 

@@ -84,22 +84,22 @@ void UInventoryPanel::QueryFor(TSubclassOf<AInventory> InSubclass)
 	RefreshPanel(entries);
 }
 
-void UInventoryPanel::FilteredQuery(TSubclassOf<AInventory> InSubclass, uint8 InFilterEnum)
+void UInventoryPanel::CustomQuery(TSubclassOf<AInventory> InSubclass, uint8 InCustomEnum)
 {
 	if (!InventoryComponent) { return; }
 
 	if (InSubclass == NULL) { InSubclass = DefaultQueriedSubclass; }
 
-	TArray<UInventoryEntry*> entries = InventoryComponent->FilteredQuery(InSubclass, InFilterEnum);
+	TArray<UInventoryEntry*> entries = InventoryComponent->CustomQuery(InSubclass, InCustomEnum);
 
 	RefreshPanel(entries);
 }
 
 void UInventoryPanel::RefreshPanel(TArray<UInventoryEntry*>& InQueriedInventory)
 {
-	TArray<UWidget*> widgets = Panel->GetAllChildren();
-
 	ResizePanel(InQueriedInventory);
+
+	TArray<UWidget*> widgets = Panel->GetAllChildren();
 
 	for (UWidget* widget : widgets)
 	{
@@ -144,7 +144,7 @@ void UInventoryPanel::ResizePanel(TArray<UInventoryEntry*> InQueriedInventory)
 		//  Panel is undersized
 		while (requiredChildrenCount > Panel->GetChildrenCount())
 		{
-			AddChildToPanel(InventoryWidget);
+			AddInventoryWidget();
 		}
 	}
 

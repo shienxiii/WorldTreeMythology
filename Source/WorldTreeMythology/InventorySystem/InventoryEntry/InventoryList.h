@@ -63,7 +63,7 @@ public:
 	UFUNCTION(BlueprintNativeEvent) TArray<UInventoryEntry*> CustomQuery(uint8 InQueryEnum);
 	
 	/**
-	 * Gets the base class that all objects
+	 * Gets the base class that all objects in this list should be derived from
 	 */
 	UFUNCTION(BlueprintPure) TSubclassOf<AInventory> GetBaseInventoryClass() { return BaseInventoryClass; }
 

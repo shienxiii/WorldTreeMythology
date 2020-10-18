@@ -59,7 +59,7 @@ TArray<UInventoryEntry*> UInventoryComponent::QueryForSubclass(TSubclassOf<AInve
 	return list->QueryForSubclass(InSubclass);
 }
 
-TArray<UInventoryEntry*> UInventoryComponent::FilteredQuery(TSubclassOf<AInventory> InInventoryClass, uint8 InQueryEnum)
+TArray<UInventoryEntry*> UInventoryComponent::CustomQuery(TSubclassOf<AInventory> InInventoryClass, uint8 InQueryEnum)
 {
 	UInventoryList* list = GetInventoryListFor(InInventoryClass);
 

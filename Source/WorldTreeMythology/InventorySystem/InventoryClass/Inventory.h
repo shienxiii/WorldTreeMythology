@@ -18,8 +18,8 @@ class WORLDTREEMYTHOLOGY_API AInventory : public AActor
 {
 	GENERATED_BODY()
 
-protected:
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Inventory") FString Name;
+public:
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Inventory") FString Name = "Some name";
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Inventory") FString Description;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Inventory") UTexture* Icon;
 
@@ -29,7 +29,7 @@ public:
 	// Sets default values for this actor's properties
 	AInventory();
 
-	FString GetName() { return Name; }
+	FString GetInventoryName() { return Name; }
 	FString GetDescription() { return Description; }
 	UTexture* GetIcon() { return Icon; }
 

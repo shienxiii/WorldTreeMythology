@@ -18,6 +18,13 @@ void UButtonMk2::NativeOnInitialized()
     DefaultStyle.SetHovered(DefaultStyle.Normal);
     FocusedStyle.SetNormal(FocusedStyle.Hovered);
 
+    CurrentStyle = &DefaultStyle;
+
+    NormalMatDynamic = UMaterialInstanceDynamic::Create(Cast<UMaterialInstance>(DefaultStyle.Normal.GetResourceObject()), nullptr);
+    FocusedMatDynamic = UMaterialInstanceDynamic::Create(Cast<UMaterialInstance>(FocusedStyle.Normal.GetResourceObject()), nullptr);
+    ClickMatDynamic = UMaterialInstanceDynamic::Create(Cast<UMaterialInstance>(DefaultStyle.Pressed.GetResourceObject()), nullptr);
+    
+
     CPP_Button->OnHovered.AddDynamic(CPP_Button, &UButton::SetFocus);
     bIsEditor = false;
 }
@@ -25,13 +32,34 @@ void UButtonMk2::NativeOnInitialized()
 void UButtonMk2::NativeOnAddedToFocusPath(const FFocusEvent& InFocusEvent)
 {
     Super::NativeOnAddedToFocusPath(InFocusEvent);
+
     CPP_Button->SetStyle(FocusedStyle);
+    CurrentStyle = &FocusedStyle;
 }
 
 void UButtonMk2::NativeOnRemovedFromFocusPath(const FFocusEvent& InFocusEvent)
 {
     Super::NativeOnRemovedFromFocusPath(InFocusEvent);
+
     CPP_Button->SetStyle(DefaultStyle);
+    CurrentStyle = &DefaultStyle;
+}
+
+void UButtonMk2::SetTextureParameter(FName ParamName, UTexture* InTexture)
+{
+    NormalMatDynamic->SetTextureParameterValue(ParamName, InTexture);
+    FocusedMatDynamic->SetTextureParameterValue(ParamName, InTexture);
+    ClickMatDynamic->SetTextureParameterValue(ParamName, InTexture);
+
+    DefaultStyle.Normal.SetResourceObject(NormalMatDynamic);
+    DefaultStyle.Hovered.SetResourceObject(NormalMatDynamic);
+    DefaultStyle.Pressed.SetResourceObject(ClickMatDynamic);
+    
+    FocusedStyle.Normal.SetResourceObject(FocusedMatDynamic);
+    FocusedStyle.Hovered.SetResourceObject(FocusedMatDynamic);
+    FocusedStyle.Pressed.SetResourceObject(ClickMatDynamic);
+
+    CPP_Button->SetStyle(*CurrentStyle);
 }
 
 FReply UButtonMk2::NativeOnFocusReceived(const FGeometry& InGeometry, const FFocusEvent& InFocusEvent)

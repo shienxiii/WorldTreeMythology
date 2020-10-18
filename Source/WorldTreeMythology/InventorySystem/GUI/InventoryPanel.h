@@ -61,9 +61,21 @@ public:
 	UFUNCTION(BlueprintCallable) void SetInventoryComponent(UInventoryComponent* InInventoryComponent) { InventoryComponent = InInventoryComponent; }
 	UFUNCTION(BlueprintCallable) void SetDefaultQueriedClass(TSubclassOf<AInventory> InBaseClass) { DefaultQueriedSubclass = InBaseClass; }
 
-
+	/**
+	 * Query the InventoryComponent for InventoryEntry of objects that inherit from a subclass of Inventory.
+	 * Automatically refreshes the panel
+	 * 
+	 * @param InSubclass The base subclass to query for
+	 */
 	UFUNCTION(BlueprintCallable) void QueryFor(TSubclassOf<AInventory> InSubclass = NULL);
-	UFUNCTION(BlueprintCallable) void FilteredQuery(TSubclassOf<AInventory> InSubclass = NULL, uint8 InFilterEnum = 0);
+
+	/**
+	 * Query the InventoryComponent for InventoryEntry of objects that inherit from a subclass of Inventory with a custom condition.
+	 * Automatically refreshes the panel
+	 *
+	 * @param InSubclass The base subclass to query for
+	 */
+	UFUNCTION(BlueprintCallable) void CustomQuery(TSubclassOf<AInventory> InSubclass = NULL, uint8 InQueryEnum = 0);
 
 	/**
 	 * Refresh this InventoryPanel to display a newly queried Inventory

@@ -21,6 +21,11 @@ protected:
 	UPROPERTY(BlueprintReadOnly) UInventoryEntry* InventoryEntry = nullptr;
 	UPROPERTY(BlueprintReadOnly) int32 QueryIndex = 0;
 
+	/**
+	 * Name of the parameter on the material used on CPP_Button to display the Inventory Icon property, if applicable
+	 */
+	UPROPERTY(EditAnywhere) FName IconParameter = "Icon";
+
 	FInventoryEntryEvent OnHovered;
 	FInventoryEntryEvent OnClicked;
 

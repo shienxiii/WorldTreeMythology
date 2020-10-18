@@ -50,7 +50,7 @@ public:
 
 #pragma region InventoryList
 	UFUNCTION(BlueprintCallable) TArray<UInventoryEntry*> QueryForSubclass(TSubclassOf<AInventory> InSubclass);
-	UFUNCTION(BlueprintCallable) TArray<UInventoryEntry*> FilteredQuery(TSubclassOf<AInventory> InInventoryClass, uint8 InQueryEnum);
+	UFUNCTION(BlueprintCallable) TArray<UInventoryEntry*> CustomQuery(TSubclassOf<AInventory> InInventoryClass, uint8 InQueryEnum);
 
 	UFUNCTION(BlueprintCallable) UInventoryList* GetInventoryListFor(TSubclassOf<AInventory> InInventoryClass);
 	/**

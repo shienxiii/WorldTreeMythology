@@ -30,10 +30,12 @@ void UInventoryEntryDisplay::NativeRefresh(TArray<UInventoryEntry*> InQuery)
 	if (QueryIndex >= InQuery.Num())
 	{
 		InventoryEntry = nullptr;
+		SetTextureParameter(IconParameter, NULL);
 	}
 	else
 	{
 		InventoryEntry = InQuery[QueryIndex];
+		SetTextureParameter(IconParameter, InventoryEntry->GetInventoryDefault()->GetIcon());
 	}
 
 	OnRefresh();
