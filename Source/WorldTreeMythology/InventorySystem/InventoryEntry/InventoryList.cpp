@@ -3,25 +3,22 @@
 
 #include "InventoryList.h"
 
-bool UInventoryList::Add(TSubclassOf<AInventory> InClass, uint8 InCount)
+UInventoryEntry* UInventoryList::Add(TSubclassOf<AInventory> InClass, uint8 InCount)
 {
 	// Test InClass eligibility
-	if(!CanStore(InClass))
-	{
-		return false;
-	}
+	if (!CanStore(InClass)) { return nullptr; }
 
-	// If this list should hold unique entry, simply create a new entry
+	// If this list should hold unique entry, add using AddUnique() and return the last created entry
 	if (bUniqueEntries)
 	{
+		UInventoryEntry* entry = nullptr;
+
 		for (int i = 0; i < InCount; i++)
 		{
-			// Create new entry
-			int32 x = Inventory.Add(NewObject<UInventoryEntry>());
-
-			Inventory[x]->InitializeEntry(InClass, InCount);
+			entry = AddUnique(InClass);
 		}
-		return true;
+
+		return entry;
 	}
 
 	// Find the entry which holds InClass
@@ -30,27 +27,53 @@ bool UInventoryList::Add(TSubclassOf<AInventory> InClass, uint8 InCount)
 			return InClass == entry->GetInventoryClass();
 		});
 
+	// Find an InventoryEntry with the InventoryClass field set to NULL
+	int32 n = Inventory.IndexOfByPredicate([](UInventoryEntry* entry)
+		{
+			return entry->GetInventoryClass() == NULL;
+		});
 
-	if (i == INDEX_NONE)
+
+	if (i != INDEX_NONE)
 	{
-		// Create new entry if none is found
-		i = Inventory.Add(NewObject<UInventoryEntry>());
+		// Entry found, simply add InCount to it
+		Inventory[i]->Add(InCount);
+	}
+	else if (n != INDEX_NONE)
+	{
+		// Found empty InventoryEntry, set i to n and initialize the Entry
+		i = n;
+
 		Inventory[i]->InitializeEntry(InClass, InCount);
 	}
 	else
 	{
-		// Otherwise simple add InCount to the entry
-		Inventory[i]->Add(InCount);
+		// Create new entry if both query returned nothing
+		i = Inventory.Add(NewObject<UInventoryEntry>(this, EntryClass));
+
+		Inventory[i]->InitializeEntry(InClass, InCount);
 	}
 
-	return true;
+	return Inventory[i];
 }
 
 UInventoryEntry* UInventoryList::AddUnique(TSubclassOf<AInventory> InClass)
 {
-	if (!bUniqueEntries) { return nullptr; }
+	// Test InClass eligibility
+	if (!CanStore(InClass)) { return nullptr; }
 
-	int32 i = Inventory.Add(NewObject<UInventoryEntry>());
+	if (!bUniqueEntries)
+	{
+		Add(InClass, 1);
+		int32 i = Inventory.IndexOfByPredicate([InClass](UInventoryEntry* entry)
+			{
+				return InClass == entry->GetInventoryClass();
+			});
+
+		return Inventory[i];
+	}
+
+	int32 i = Inventory.Add(NewObject<UInventoryEntry>(this, EntryClass));
 
 	Inventory[i]->InitializeEntry(InClass, 1);
 

@@ -38,6 +38,8 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable) bool AddSubclassToInventory(TSubclassOf<AInventory> InInventory, uint8 InCount = 1);
 
+	//UFUNCTION(BlueprintCallable) bool AddInventoryByEntry(UInventoryEntry* InInventoryEntry);
+
 	/**
 	 * Adds a single unique entry for the passed Inventory class and returns a reference to the entry.
 	 * This is used for when picking up Inventory actors from the game world.

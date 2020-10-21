@@ -21,7 +21,9 @@ protected:
 
 	// The base class of all Inventory object that this class will store.
 	// Only classes that inherited from this base class can be stored
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Inventory") TSubclassOf<AInventory> BaseInventoryClass;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Inventory") TSubclassOf<AInventory> BaseInventoryClass = AInventory::StaticClass();
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Inventory") TSubclassOf<UInventoryEntry> EntryClass = UInventoryEntry::StaticClass();
 
 	/**
 	 * Determines whether the copies of the same Inventory class will be grouped in the same entry.
@@ -31,10 +33,10 @@ protected:
 
 public:
 	/**
-	 * Adds InCount number of the passed Inventory class and returns true if successful.
+	 * Adds InCount number of the passed Inventory class and returns the assigned InventoryEntry if successful.
 	 * Inventory objects are added in their default state. To store unique traits of each Inventory object, use AddUnique()
 	 */
-	UFUNCTION(BlueprintCallable) bool Add(TSubclassOf<AInventory> InClass, uint8 InCount = 1);
+	UFUNCTION(BlueprintCallable) UInventoryEntry* Add(TSubclassOf<AInventory> InClass, uint8 InCount = 1);
 
 	/**
 	 * Adds a single unique entry for the passed Inventory class and returns a pointer to the entry.
@@ -44,9 +46,12 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable) UInventoryEntry* AddUnique(TSubclassOf<AInventory> InClass);
 
+
 	// Checks if this bUniqueEntries is true
 	UFUNCTION(BlueprintCallable) bool IsUniqueEntriesList() { return bUniqueEntries; }
 
+	// Returns every single InventoryEntry stored on this list, including the empty ones
+	TArray<UInventoryEntry*> QueryForAll() { return Inventory; }
 
 	/**
 	 * Queries the list for Inventory that are derived from a subclass, which is derived from BaseClass

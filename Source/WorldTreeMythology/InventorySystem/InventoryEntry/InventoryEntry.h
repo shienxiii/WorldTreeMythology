@@ -27,8 +27,11 @@ public:
 
 
 	void Add(uint8 InCount) { Count += InCount; }
+	void Remove(uint8 InCount) { Count -= InCount; }
 
 	TSubclassOf<AInventory> GetInventoryClass() { return InventoryClass; }
-	AInventory* GetInventoryDefault() { return InventoryClass.GetDefaultObject(); }
+	uint8 GetCount() { return Count; }
 	bool IsChildOf(TSubclassOf<AInventory> InBaseClass);
+
+	UFUNCTION(BlueprintPure) AInventory* GetInventoryDefault() { return InventoryClass.GetDefaultObject(); }
 };

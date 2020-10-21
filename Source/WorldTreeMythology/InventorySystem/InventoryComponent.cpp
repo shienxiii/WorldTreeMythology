@@ -32,7 +32,9 @@ bool UInventoryComponent::AddSubclassToInventory(TSubclassOf<AInventory> InInven
 
 	if (!list) { return false; }
 
-	return list->Add(InInventory, InCount);
+	list->Add(InInventory, InCount);
+
+	return true;
 }
 
 UInventoryEntry* UInventoryComponent::AddActorToInventory(AInventory* InInventory)

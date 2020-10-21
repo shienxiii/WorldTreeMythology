@@ -31,11 +31,13 @@ void UInventoryEntryDisplay::NativeRefresh(TArray<UInventoryEntry*> InQuery)
 	{
 		InventoryEntry = nullptr;
 		SetTextureParameter(IconParameter, NULL);
+		CPP_Button->SetIsEnabled(bEnableOnNull);
 	}
 	else
 	{
 		InventoryEntry = InQuery[QueryIndex];
 		SetTextureParameter(IconParameter, InventoryEntry->GetInventoryDefault()->GetIcon());
+		CPP_Button->SetIsEnabled(true);
 	}
 
 	OnRefresh();

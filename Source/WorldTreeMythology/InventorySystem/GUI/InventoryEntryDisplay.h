@@ -26,6 +26,9 @@ protected:
 	 */
 	UPROPERTY(EditAnywhere) FName IconParameter = "Icon";
 
+	// Enable this entry display when it does not store anything?
+	UPROPERTY(EditAnywhere) bool bEnableOnNull = false;
+
 	FInventoryEntryEvent OnHovered;
 	FInventoryEntryEvent OnClicked;
 
