@@ -33,6 +33,15 @@ protected:
 
 public:
 	/**
+	 * Modify the list to a specific size.
+	 * If new size is larger than the current size, all the added InventoryEntry will be an empty entry.
+	 * If new size is smaller than the current size, the list will be reduced to either the target size or the last non-empty entry
+	 */
+	UFUNCTION(BlueprintCallable) void MofifyListSize(int32 InCount);
+
+	UInventoryEntry* CreateNewEntry();
+
+	/**
 	 * Adds InCount number of the passed Inventory class and returns the assigned InventoryEntry if successful.
 	 * Inventory objects are added in their default state. To store unique traits of each Inventory object, use AddUnique()
 	 */
@@ -45,7 +54,6 @@ public:
 	 * bUniqueEntries must be true
 	 */
 	UFUNCTION(BlueprintCallable) UInventoryEntry* AddUnique(TSubclassOf<AInventory> InClass);
-
 
 	// Checks if this bUniqueEntries is true
 	UFUNCTION(BlueprintCallable) bool IsUniqueEntriesList() { return bUniqueEntries; }
@@ -71,7 +79,6 @@ public:
 	 * Gets the base class that all objects in this list should be derived from
 	 */
 	UFUNCTION(BlueprintPure) TSubclassOf<AInventory> GetBaseInventoryClass() { return BaseInventoryClass; }
-
 
 	/**
 	 * Checks to see if the passed class type can be stored in this InventoryList

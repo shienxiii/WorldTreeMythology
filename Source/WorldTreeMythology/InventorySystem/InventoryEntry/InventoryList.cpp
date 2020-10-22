@@ -3,6 +3,32 @@
 
 #include "InventoryList.h"
 
+void UInventoryList::MofifyListSize(int32 InCount)
+{
+	if (Inventory.Num() < InCount)
+	{
+		while (Inventory.Num() < InCount)
+		{
+			CreateNewEntry();
+		}
+	}
+	else
+	{
+		while (Inventory.Num() > InCount && 
+			(Inventory[Inventory.Num() - 1]->GetInventoryClass()) == NULL)
+		{
+			Inventory.RemoveAt(Inventory.Num() - 1, 1, true);
+		}
+	}
+}
+
+UInventoryEntry* UInventoryList::CreateNewEntry()
+{
+	int i = Inventory.Add(NewObject<UInventoryEntry>(this, EntryClass));
+
+	return Inventory[i];
+}
+
 UInventoryEntry* UInventoryList::Add(TSubclassOf<AInventory> InClass, uint8 InCount)
 {
 	// Test InClass eligibility
@@ -49,9 +75,8 @@ UInventoryEntry* UInventoryList::Add(TSubclassOf<AInventory> InClass, uint8 InCo
 	else
 	{
 		// Create new entry if both query returned nothing
-		i = Inventory.Add(NewObject<UInventoryEntry>(this, EntryClass));
-
-		Inventory[i]->InitializeEntry(InClass, InCount);
+		CreateNewEntry()->InitializeEntry(InClass, InCount);
+		i = Inventory.Num() - 1;
 	}
 
 	return Inventory[i];
@@ -62,22 +87,12 @@ UInventoryEntry* UInventoryList::AddUnique(TSubclassOf<AInventory> InClass)
 	// Test InClass eligibility
 	if (!CanStore(InClass)) { return nullptr; }
 
-	if (!bUniqueEntries)
-	{
-		Add(InClass, 1);
-		int32 i = Inventory.IndexOfByPredicate([InClass](UInventoryEntry* entry)
-			{
-				return InClass == entry->GetInventoryClass();
-			});
+	if (!bUniqueEntries) { return Add(InClass, 1); }
 
-		return Inventory[i];
-	}
+	UInventoryEntry* entry = CreateNewEntry();
+	entry->InitializeEntry(InClass, 1);
 
-	int32 i = Inventory.Add(NewObject<UInventoryEntry>(this, EntryClass));
-
-	Inventory[i]->InitializeEntry(InClass, 1);
-
-	return Inventory[i];
+	return entry;
 }
 
 TArray<UInventoryEntry*> UInventoryList::QueryForSubclass(TSubclassOf<AInventory> InSubclass)
