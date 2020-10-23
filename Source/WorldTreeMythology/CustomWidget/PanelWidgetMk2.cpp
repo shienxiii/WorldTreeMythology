@@ -82,7 +82,7 @@ UWidget* UPanelWidgetMk2::NavigateWidget(EUINavigation InNavigation)
 	else
 	{
 		index--;
-		index = index >= 0 ? index : Panel->GetChildrenCount() - 1;
+		index = index > -1 ? index : Panel->GetChildrenCount() - 1;
 	}
 
 	return Panel->GetChildAt(index);

@@ -7,12 +7,6 @@
 void UInventoryEntryDisplay::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
-
-	if (CPP_Button)
-	{
-		CPP_Button->OnHovered.AddDynamic(this, &UInventoryEntryDisplay::NativeHoverEvent);
-		CPP_Button->OnClicked.AddDynamic(this, &UInventoryEntryDisplay::NativeClickEvent);
-	}
 }
 
 void UInventoryEntryDisplay::SynchronizeProperties()
@@ -63,10 +57,12 @@ bool UInventoryEntryDisplay::BindClickDelegate(UObject* InObject, FName InFuncNa
 
 void UInventoryEntryDisplay::NativeHoverEvent()
 {
+	Super::NativeHoverEvent();
 	OnHovered.ExecuteIfBound(InventoryEntry);
 }
 
 void UInventoryEntryDisplay::NativeClickEvent()
 {
+	Super::NativeClickEvent();
 	OnClicked.ExecuteIfBound(InventoryEntry);
 }

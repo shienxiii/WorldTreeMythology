@@ -55,7 +55,7 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable) UInventoryEntry* AddUnique(TSubclassOf<AInventory> InClass);
 
-	// Checks if this bUniqueEntries is true
+	// Checks if bUniqueEntries is true
 	UFUNCTION(BlueprintCallable) bool IsUniqueEntriesList() { return bUniqueEntries; }
 
 	// Returns every single InventoryEntry stored on this list, including the empty ones

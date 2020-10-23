@@ -48,8 +48,8 @@ public:
 	bool BindHoverDelegate(UObject* InObject, FName InFuncName);
 	bool BindClickDelegate(UObject* InObject, FName InFuncName);
 
-	UFUNCTION() void NativeHoverEvent();
-	UFUNCTION() void NativeClickEvent();
+	void NativeHoverEvent() override;
+	void NativeClickEvent() override;
 #pragma endregion
 
 #if WITH_EDITOR

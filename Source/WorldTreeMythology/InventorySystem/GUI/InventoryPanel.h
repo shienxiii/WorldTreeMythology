@@ -61,6 +61,8 @@ public:
 	UFUNCTION(BlueprintCallable) void SetInventoryComponent(UInventoryComponent* InInventoryComponent) { InventoryComponent = InInventoryComponent; }
 	UFUNCTION(BlueprintCallable) void SetDefaultQueriedClass(TSubclassOf<AInventory> InBaseClass) { DefaultQueriedSubclass = InBaseClass; }
 
+	// Create a GetAll() query
+
 	/**
 	 * Query the InventoryComponent for InventoryEntry of objects that inherit from a subclass of Inventory.
 	 * Automatically refreshes the panel

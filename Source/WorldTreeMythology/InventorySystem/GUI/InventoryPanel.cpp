@@ -167,7 +167,8 @@ UWidget* UInventoryPanel::NavigateWidget(EUINavigation InNavigation)
 	check(i != INDEX_NONE);
 
 	nextWidget = nextPage->GetChildAt(i);
-	prevPage->ForgetLastFocusedChild();
+
+	if (prevPage != nextPage) { prevPage->ForgetLastFocusedChild(); }
 
 	return nextWidget;
 }

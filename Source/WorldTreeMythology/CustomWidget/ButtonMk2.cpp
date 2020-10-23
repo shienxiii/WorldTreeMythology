@@ -2,7 +2,7 @@
 
 
 #include "ButtonMk2.h"
-#include "Components/Button.h"
+
 
 UButtonMk2::UButtonMk2(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -24,8 +24,14 @@ void UButtonMk2::NativeOnInitialized()
     FocusedMatDynamic = UMaterialInstanceDynamic::Create(Cast<UMaterialInstance>(FocusedStyle.Normal.GetResourceObject()), nullptr);
     ClickMatDynamic = UMaterialInstanceDynamic::Create(Cast<UMaterialInstance>(DefaultStyle.Pressed.GetResourceObject()), nullptr);
     
+    if (CPP_Button)
+    {
+        CPP_Button->OnHovered.AddDynamic(CPP_Button, &UButton::SetFocus);
 
-    CPP_Button->OnHovered.AddDynamic(CPP_Button, &UButton::SetFocus);
+        CPP_Button->OnHovered.AddDynamic(this, &UButtonMk2::NativeHoverEvent);
+        CPP_Button->OnClicked.AddDynamic(this, &UButtonMk2::NativeClickEvent);
+    }
+
     bIsEditor = false;
 }
 
@@ -67,4 +73,14 @@ FReply UButtonMk2::NativeOnFocusReceived(const FGeometry& InGeometry, const FFoc
     CPP_Button->SetFocus();
     CPP_Button->OnHovered.Broadcast();
     return Super::NativeOnFocusReceived(InGeometry, InFocusEvent);
+}
+
+void UButtonMk2::NativeHoverEvent()
+{
+    OnHovered.Broadcast();
+}
+
+void UButtonMk2::NativeClickEvent()
+{
+    OnClicked.Broadcast();
 }

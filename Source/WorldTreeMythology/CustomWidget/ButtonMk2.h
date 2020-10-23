@@ -3,11 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/Button.h"
 #include "Blueprint/UserWidget.h"
 #include "WidgetMk2.h"
 #include "ButtonMk2.generated.h"
-
-class UButton;
 
 
 
@@ -29,6 +28,7 @@ protected:
 	// This is the style to be swapped to when focused
 	FButtonStyle FocusedStyle;
 
+	// Pointer to the current style assigned to CPP_Button
 	FButtonStyle* CurrentStyle;
 
 	UMaterialInstanceDynamic* NormalMatDynamic;
@@ -44,6 +44,10 @@ protected:
 	bool bIsEditor = true;
 
 public:
+	UPROPERTY(BlueprintAssignable) FOnButtonHoverEvent OnHovered;
+	UPROPERTY(BlueprintAssignable) FOnButtonClickedEvent OnClicked;
+
+public:
 	UButtonMk2(const FObjectInitializer& ObjectInitializer);
 
 
@@ -54,6 +58,9 @@ public:
 	void SetTextureParameter(FName ParamName, UTexture* InTexture);
 
 	FReply NativeOnFocusReceived(const FGeometry& InGeometry, const FFocusEvent& InFocusEvent) override;
+
+	UFUNCTION() virtual void NativeHoverEvent();
+	UFUNCTION() virtual void NativeClickEvent();
 
 #if WITH_EDITOR
 	const FText GetPaletteCategory() override { return FText::FromString("UMG Mk2"); }
