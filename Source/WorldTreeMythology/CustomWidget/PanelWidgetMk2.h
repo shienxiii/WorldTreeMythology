@@ -29,7 +29,7 @@ protected:
 	UPROPERTY(meta = (BindWidget)) UPanelWidget* MainPanel;
 
 	// Points to the last user focused child under MainPanel
-	UWidget* LastFocusedChild = nullptr;
+	UWidget* FocusedChild = nullptr;
 
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Panel Setup") EPanelLayout PanelLayout = EPanelLayout::VERTICAL;
@@ -65,9 +65,9 @@ public:
 	int32 GetChildIndex(UWidget* InWidget);
 	int32 GetChildrenCount() { return MainPanel->GetChildrenCount(); }
 
-	UFUNCTION() UWidget* GetLastFocusedChild() { return LastFocusedChild; }
-	UFUNCTION() virtual void SetLastFocusedChild(UWidget* InWidget) { LastFocusedChild = InWidget; }
-	void ForgetLastFocusedChild() { LastFocusedChild = nullptr; }
+	UFUNCTION() UWidget* GetLastFocusedChild() { return FocusedChild; }
+	UFUNCTION() virtual void SetLastFocusedChild(UWidget* InWidget) { FocusedChild = InWidget; }
+	void ForgetLastFocusedChild() { FocusedChild = nullptr; }
 
 
 	UFUNCTION() virtual UWidget* NavigateWidget(EUINavigation InNavigation);

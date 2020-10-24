@@ -157,7 +157,7 @@ UWidget* UInventoryPanel::NavigateWidget(EUINavigation InNavigation)
 		return nextWidget;
 	}
 
-	UInventoryPage* prevPage = Cast<UInventoryPage>(LastFocusedChild);
+	UInventoryPage* prevPage = Cast<UInventoryPage>(FocusedChild);
 	UInventoryPage* nextPage = Cast<UInventoryPage>(nextWidget);
 	check(prevPage && nextPage);
 
@@ -177,7 +177,7 @@ void UInventoryPanel::SetLastFocusedChild(UWidget* InWidget)
 
 	if (ScrollPanel)
 	{
-		ScrollPanel->ScrollWidgetIntoView(LastFocusedChild, ScrollPanel->bAnimateWheelScrolling, ScrollPanel->NavigationDestination, ScrollPanel->NavigationScrollPadding);
+		ScrollPanel->ScrollWidgetIntoView(FocusedChild, ScrollPanel->bAnimateWheelScrolling, ScrollPanel->NavigationDestination, ScrollPanel->NavigationScrollPadding);
 	}
 }
 

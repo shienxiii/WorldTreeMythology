@@ -34,20 +34,20 @@ void UPanelWidgetMk2::BuildNavigation(UWidget* InWidget)
 {
 	if (PanelLayout == EPanelLayout::HORIZONTAL)
 	{
-		InWidget->SetNavigationRuleCustomBoundary(EUINavigation::Left, NavigatePrev);
-		InWidget->SetNavigationRuleCustomBoundary(EUINavigation::Right, NavigateNext);
+		InWidget->SetNavigationRuleCustom(EUINavigation::Left, NavigatePrev);
+		InWidget->SetNavigationRuleCustom(EUINavigation::Right, NavigateNext);
 	}
 	else if (PanelLayout == EPanelLayout::VERTICAL)
 	{
-		InWidget->SetNavigationRuleCustomBoundary(EUINavigation::Up, NavigatePrev);
-		InWidget->SetNavigationRuleCustomBoundary(EUINavigation::Down, NavigateNext);
+		InWidget->SetNavigationRuleCustom(EUINavigation::Up, NavigatePrev);
+		InWidget->SetNavigationRuleCustom(EUINavigation::Down, NavigateNext);
 	}
 	else if (PanelLayout == EPanelLayout::GRID)
 	{
-		InWidget->SetNavigationRuleCustomBoundary(EUINavigation::Up, NavigateGrid);
-		InWidget->SetNavigationRuleCustomBoundary(EUINavigation::Down, NavigateGrid);
-		InWidget->SetNavigationRuleCustomBoundary(EUINavigation::Left, NavigateGrid);
-		InWidget->SetNavigationRuleCustomBoundary(EUINavigation::Right, NavigateGrid);
+		InWidget->SetNavigationRuleCustom(EUINavigation::Up, NavigateGrid);
+		InWidget->SetNavigationRuleCustom(EUINavigation::Down, NavigateGrid);
+		InWidget->SetNavigationRuleCustom(EUINavigation::Left, NavigateGrid);
+		InWidget->SetNavigationRuleCustom(EUINavigation::Right, NavigateGrid);
 	}
 }
 
@@ -100,7 +100,7 @@ int32 UPanelWidgetMk2::GetChildIndex(UWidget* InWidget)
 
 UWidget* UPanelWidgetMk2::NavigateWidget(EUINavigation InNavigation)
 {
-	int32 index = GetChildIndex(LastFocusedChild);
+	int32 index = GetChildIndex(FocusedChild);
 	if (index == INDEX_NONE) { return nullptr; }
 
 	// circular navigation for now
@@ -120,5 +120,28 @@ UWidget* UPanelWidgetMk2::NavigateWidget(EUINavigation InNavigation)
 
 UWidget* UPanelWidgetMk2::NavigateGridPanel(EUINavigation InNavigation)
 {
-	return NavigateWidget(InNavigation);
+	int32 index = GetChildIndex(FocusedChild);
+	if (index == INDEX_NONE) { return nullptr; }
+
+	// circular navigation for now
+	switch (InNavigation)
+	{
+	case EUINavigation::Left:
+		index -= (index % GridX) == 0 ? -(GridX - 1) : 1;
+		break;
+	case EUINavigation::Right:
+		index += (index % GridX) == (GridX - 1) ? -(GridX - 1) : 1;
+		break;
+	case EUINavigation::Up:
+		index -= GridX;
+		index = index > -1 ? index : MainPanel->GetChildrenCount() + index;
+		break;
+	case EUINavigation::Down:
+		index += GridX;
+		index %= MainPanel->GetChildrenCount();
+		break;
+
+	}
+
+	return MainPanel->GetChildAt(index);
 }
