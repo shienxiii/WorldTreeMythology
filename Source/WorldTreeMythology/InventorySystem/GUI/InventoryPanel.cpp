@@ -48,11 +48,11 @@ UWidget* UInventoryPanel::AddInventoryWidget()
 	int i = MainPanel->GetChildrenCount();
 
 	UWidgetMk2* widget = Cast<UWidgetMk2>(AddChildToPanel(InventoryWidget));
-	widget->BindOnWidgetFocused(this, "SetLastFocusedChild");
 
 	if (InventoryWidget->IsChildOf(UInventoryPage::StaticClass()))
 	{
 		UInventoryPage* page = Cast<UInventoryPage>(widget);
+
 		page->BindHoverDelegate(this, "NativeEntryHoverEvent");
 		page->BindClickDelegate(this, "NativeEntryClickEvent");
 		page->SetPageNum(i);
@@ -60,6 +60,7 @@ UWidget* UInventoryPanel::AddInventoryWidget()
 	else
 	{
 		UInventoryEntryDisplay* entry = Cast<UInventoryEntryDisplay>(widget);
+
 		entry->BindHoverDelegate(this, "NativeEntryHoverEvent");
 		entry->BindClickDelegate(this, "NativeEntryClickEvent");
 		entry->SetQueryIndex(i);

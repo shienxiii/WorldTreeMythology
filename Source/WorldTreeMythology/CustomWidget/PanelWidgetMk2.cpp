@@ -3,6 +3,7 @@
 
 #include "PanelWidgetMk2.h"
 #include "Components/PanelWidget.h"
+#include "Components/GridPanel.h"
 #include "Blueprint/WidgetTree.h"
 
 UPanelWidgetMk2::UPanelWidgetMk2(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -11,6 +12,8 @@ UPanelWidgetMk2::UPanelWidgetMk2(const FObjectInitializer& ObjectInitializer) : 
 
 	NavigateNext.BindUFunction(this, TEXT("NavigateWidget"));
 	NavigatePrev.BindUFunction(this, TEXT("NavigateWidget"));
+
+	NavigateGrid.BindUFunction(this, TEXT("NavigateGridPanel"));
 }
 
 void UPanelWidgetMk2::NativeOnInitialized()
@@ -29,25 +32,50 @@ void UPanelWidgetMk2::RebuildNavigation()
 
 void UPanelWidgetMk2::BuildNavigation(UWidget* InWidget)
 {
-	if (NavigationDirection == EPanelLayout::HORIZONTAL)
+	if (PanelLayout == EPanelLayout::HORIZONTAL)
 	{
-		InWidget->SetNavigationRuleCustom(EUINavigation::Left, NavigatePrev);
-		InWidget->SetNavigationRuleCustom(EUINavigation::Right, NavigateNext);
+		InWidget->SetNavigationRuleCustomBoundary(EUINavigation::Left, NavigatePrev);
+		InWidget->SetNavigationRuleCustomBoundary(EUINavigation::Right, NavigateNext);
 	}
-	else if (NavigationDirection == EPanelLayout::VERTICAL)
+	else if (PanelLayout == EPanelLayout::VERTICAL)
 	{
-		InWidget->SetNavigationRuleCustom(EUINavigation::Up, NavigatePrev);
-		InWidget->SetNavigationRuleCustom(EUINavigation::Down, NavigateNext);
+		InWidget->SetNavigationRuleCustomBoundary(EUINavigation::Up, NavigatePrev);
+		InWidget->SetNavigationRuleCustomBoundary(EUINavigation::Down, NavigateNext);
 	}
-	else if (NavigationDirection == EPanelLayout::GRID)
+	else if (PanelLayout == EPanelLayout::GRID)
 	{
+		InWidget->SetNavigationRuleCustomBoundary(EUINavigation::Up, NavigateGrid);
+		InWidget->SetNavigationRuleCustomBoundary(EUINavigation::Down, NavigateGrid);
+		InWidget->SetNavigationRuleCustomBoundary(EUINavigation::Left, NavigateGrid);
+		InWidget->SetNavigationRuleCustomBoundary(EUINavigation::Right, NavigateGrid);
 	}
 }
 
 UWidget* UPanelWidgetMk2::AddChildToPanel(TSubclassOf<UWidget> InChildClass)
 {
+	int i = MainPanel->GetChildrenCount();
+
 	UWidget* newChild = WidgetTree->ConstructWidget<UWidget>(InChildClass);
-	MainPanel->AddChild(newChild);
+
+	if (UGridPanel* grid = Cast<UGridPanel>(MainPanel))
+	{
+		// Get x position
+		int x = i % GridX;
+
+		// Get y position
+		int y = i / GridX;
+
+		grid->AddChildToGrid(newChild, y, x);
+		//PlaceOnGrid(newChild,)
+	}
+	else
+	{
+		MainPanel->AddChild(newChild);
+	}
+
+
+	if (UWidgetMk2* widget = Cast<UWidgetMk2>(newChild)) { widget->BindOnWidgetFocused(this, "SetLastFocusedChild"); }
+
 	return newChild;
 }
 
@@ -88,4 +116,9 @@ UWidget* UPanelWidgetMk2::NavigateWidget(EUINavigation InNavigation)
 	}
 
 	return MainPanel->GetChildAt(index);
+}
+
+UWidget* UPanelWidgetMk2::NavigateGridPanel(EUINavigation InNavigation)
+{
+	return NavigateWidget(InNavigation);
 }

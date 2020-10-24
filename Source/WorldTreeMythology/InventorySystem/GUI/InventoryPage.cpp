@@ -25,7 +25,7 @@ void UInventoryPage::InitializePage()
 	for (int i = 0; i < EntryCount; i++)
 	{
 		UInventoryEntryDisplay* entry = Cast<UInventoryEntryDisplay>(AddChildToPanel(EntryClass));
-		entry->BindOnWidgetFocused(this, "SetLastFocusedChild");
+
 		entry->BindHoverDelegate(this, "EntryHoverEvent");
 		entry->BindClickDelegate(this, "EntryClickEvent");
 		BuildNavigation(entry);

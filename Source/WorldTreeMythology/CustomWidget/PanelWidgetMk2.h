@@ -32,9 +32,13 @@ protected:
 	UWidget* LastFocusedChild = nullptr;
 
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Panel Setup") EPanelLayout NavigationDirection = EPanelLayout::VERTICAL;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Panel Setup") EPanelLayout PanelLayout = EPanelLayout::VERTICAL;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Panel Setup", meta = (EditCondition = "PanelLayout == EPanelLayout::GRID")) uint8 GridX = 5;
+
 	FCustomWidgetNavigationDelegate NavigateNext;
 	FCustomWidgetNavigationDelegate NavigatePrev;
+
+	FCustomWidgetNavigationDelegate NavigateGrid;
 public:
 	UPanelWidgetMk2(const FObjectInitializer& ObjectInitializer);
 	void NativeOnInitialized() override;
@@ -67,6 +71,7 @@ public:
 
 
 	UFUNCTION() virtual UWidget* NavigateWidget(EUINavigation InNavigation);
+	UFUNCTION() virtual UWidget* NavigateGridPanel(EUINavigation InNavigation);
 
 #if WITH_EDITOR
 	const FText GetPaletteCategory() override { return FText::FromString("UMG Mk2"); }
