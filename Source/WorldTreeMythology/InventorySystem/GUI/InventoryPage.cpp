@@ -24,9 +24,9 @@ void UInventoryPage::SynchronizeProperties()
 
 void UInventoryPage::InitializePage()
 {
-	if (!EntryClass) { return; }
+	if (!EntryClass || !MainPanel) { return; }
 
-	Panel->ClearChildren();
+	MainPanel->ClearChildren();
 
 	for (int i = 0; i < EntryCount; i++)
 	{
@@ -41,7 +41,7 @@ void UInventoryPage::InitializePage()
 void UInventoryPage::SetPageNum(int32 InPageNum)
 {
 	PageNum = InPageNum;
-	TArray<UWidget*> entries = Panel->GetAllChildren();
+	TArray<UWidget*> entries = MainPanel->GetAllChildren();
 
 	for (int i = 0; i < entries.Num(); i++)
 	{
@@ -51,7 +51,7 @@ void UInventoryPage::SetPageNum(int32 InPageNum)
 
 void UInventoryPage::RefreshPage(TArray<UInventoryEntry*> InQuery)
 {
-	TArray<UWidget*> entries = Panel->GetAllChildren();
+	TArray<UWidget*> entries = MainPanel->GetAllChildren();
 
 	for (int i = 0; i < entries.Num(); i++)
 	{

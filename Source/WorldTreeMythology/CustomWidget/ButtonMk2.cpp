@@ -13,8 +13,8 @@ void UButtonMk2::NativeOnInitialized()
 {
     Super::NativeOnInitialized();
 
-    DefaultStyle = CPP_Button->WidgetStyle;
-    FocusedStyle = CPP_Button->WidgetStyle;
+    DefaultStyle = MainButton->WidgetStyle;
+    FocusedStyle = MainButton->WidgetStyle;
     DefaultStyle.SetHovered(DefaultStyle.Normal);
     FocusedStyle.SetNormal(FocusedStyle.Hovered);
 
@@ -24,12 +24,12 @@ void UButtonMk2::NativeOnInitialized()
     FocusedMatDynamic = UMaterialInstanceDynamic::Create(Cast<UMaterialInstance>(FocusedStyle.Normal.GetResourceObject()), nullptr);
     ClickMatDynamic = UMaterialInstanceDynamic::Create(Cast<UMaterialInstance>(DefaultStyle.Pressed.GetResourceObject()), nullptr);
     
-    if (CPP_Button)
+    if (MainButton)
     {
-        CPP_Button->OnHovered.AddDynamic(CPP_Button, &UButton::SetFocus);
+        MainButton->OnHovered.AddDynamic(MainButton, &UButton::SetFocus);
 
-        CPP_Button->OnHovered.AddDynamic(this, &UButtonMk2::NativeHoverEvent);
-        CPP_Button->OnClicked.AddDynamic(this, &UButtonMk2::NativeClickEvent);
+        MainButton->OnHovered.AddDynamic(this, &UButtonMk2::NativeHoverEvent);
+        MainButton->OnClicked.AddDynamic(this, &UButtonMk2::NativeClickEvent);
     }
 
     bIsEditor = false;
@@ -39,7 +39,7 @@ void UButtonMk2::NativeOnAddedToFocusPath(const FFocusEvent& InFocusEvent)
 {
     Super::NativeOnAddedToFocusPath(InFocusEvent);
 
-    CPP_Button->SetStyle(FocusedStyle);
+    MainButton->SetStyle(FocusedStyle);
     CurrentStyle = &FocusedStyle;
 }
 
@@ -47,7 +47,7 @@ void UButtonMk2::NativeOnRemovedFromFocusPath(const FFocusEvent& InFocusEvent)
 {
     Super::NativeOnRemovedFromFocusPath(InFocusEvent);
 
-    CPP_Button->SetStyle(DefaultStyle);
+    MainButton->SetStyle(DefaultStyle);
     CurrentStyle = &DefaultStyle;
 }
 
@@ -65,13 +65,13 @@ void UButtonMk2::SetTextureParameter(FName ParamName, UTexture* InTexture)
     FocusedStyle.Hovered.SetResourceObject(FocusedMatDynamic);
     FocusedStyle.Pressed.SetResourceObject(ClickMatDynamic);
 
-    CPP_Button->SetStyle(*CurrentStyle);
+    MainButton->SetStyle(*CurrentStyle);
 }
 
 FReply UButtonMk2::NativeOnFocusReceived(const FGeometry& InGeometry, const FFocusEvent& InFocusEvent)
 {
-    CPP_Button->SetFocus();
-    CPP_Button->OnHovered.Broadcast();
+    MainButton->SetFocus();
+    MainButton->OnHovered.Broadcast();
     return Super::NativeOnFocusReceived(InGeometry, InFocusEvent);
 }
 

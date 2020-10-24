@@ -26,9 +26,9 @@ class WORLDTREEMYTHOLOGY_API UPanelWidgetMk2 : public UWidgetMk2
 
 protected:
 	// This is the C++ handled PanelWidget that will manage the UI navigation
-	UPROPERTY(meta = (BindWidget)) UPanelWidget* Panel;
+	UPROPERTY(meta = (BindWidget)) UPanelWidget* MainPanel;
 
-	// Points to the last user focused child under Panel
+	// Points to the last user focused child under MainPanel
 	UWidget* LastFocusedChild = nullptr;
 
 	/**
@@ -45,12 +45,12 @@ public:
 	UPanelWidgetMk2(const FObjectInitializer& ObjectInitializer);
 	void NativeOnInitialized() override;
 
-	// Build Navigation for existing child under Panel
+	// Build Navigation for existing child under MainPanel
 	UFUNCTION(BlueprintCallable) void RebuildNavigation();
 	void BuildNavigation(UWidget* InWidget);
 
 	/**
-	 * Spawn and add a child to Panel
+	 * Spawn and add a child to MainPanel
 	 *
 	 * @param InChildClass The class of the child to add
 	 *
@@ -59,13 +59,13 @@ public:
 	virtual UWidget* AddChildToPanel(TSubclassOf<UWidget> InChildClass);
 
 	/**
-	 * Return the child widget under Panel based on the given index
+	 * Return the child widget under MainPanel based on the given index
 	 *
 	 * @param ChildIndex Index of the child to focus on
 	 */
 	UWidget* GetChildAt(int32 ChildIndex = 0);
 	int32 GetChildIndex(UWidget* InWidget);
-	int32 GetChildrenCount() { return Panel->GetChildrenCount(); }
+	int32 GetChildrenCount() { return MainPanel->GetChildrenCount(); }
 
 	UFUNCTION() UWidget* GetLastFocusedChild() { return LastFocusedChild; }
 	UFUNCTION() virtual void SetLastFocusedChild(UWidget* InWidget) { LastFocusedChild = InWidget; }

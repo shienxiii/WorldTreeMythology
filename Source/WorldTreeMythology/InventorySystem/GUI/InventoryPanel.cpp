@@ -11,8 +11,8 @@ void UInventoryPanel::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
-	// Attempt to cast the Panel as a ScrollBox
-	ScrollPanel = Cast<UScrollBox>(Panel);
+	// Attempt to cast the MainPanel as a ScrollBox
+	ScrollPanel = Cast<UScrollBox>(MainPanel);
 
 	InitializePanel();
 
@@ -30,7 +30,9 @@ void UInventoryPanel::SynchronizeProperties()
 
 void UInventoryPanel::InitializePanel()
 {
-	Panel->ClearChildren();
+	if (!MainPanel) { return; }
+
+	MainPanel->ClearChildren();
 
 	if (!InventoryWidget ||
 		(!InventoryWidget->IsChildOf(UInventoryPage::StaticClass()) && !InventoryWidget->IsChildOf(UInventoryEntryDisplay::StaticClass()))
@@ -48,7 +50,7 @@ void UInventoryPanel::InitializePanel()
 
 UWidget* UInventoryPanel::AddInventoryWidget()
 {
-	int i = Panel->GetChildrenCount();
+	int i = MainPanel->GetChildrenCount();
 
 	UWidgetMk2* widget = Cast<UWidgetMk2>(AddChildToPanel(InventoryWidget));
 	widget->BindOnWidgetFocused(this, "SetLastFocusedChild");
@@ -99,7 +101,7 @@ void UInventoryPanel::RefreshPanel(TArray<UInventoryEntry*>& InQueriedInventory)
 {
 	ResizePanel(InQueriedInventory);
 
-	TArray<UWidget*> widgets = Panel->GetAllChildren();
+	TArray<UWidget*> widgets = MainPanel->GetAllChildren();
 
 	for (UWidget* widget : widgets)
 	{
@@ -118,10 +120,10 @@ void UInventoryPanel::ResizePanel(TArray<UInventoryEntry*> InQueriedInventory)
 {
 	int32 queryCount = InQueriedInventory.Num();
 
-	// Required children count will be equal to queryCount if Panel children are InventoryEntryDisplay
+	// Required children count will be equal to queryCount if MainPanel children are InventoryEntryDisplay
 	int32 requiredChildrenCount = queryCount;
 
-	// If Panel children are InventoryPage, recalculate the required number of children
+	// If MainPanel children are InventoryPage, recalculate the required number of children
 	if (InventoryWidget.Get()->IsChildOf<UInventoryPage>())
 	{
 		UInventoryPage* page = Cast<UInventoryPage>(InventoryWidget.GetDefaultObject());
@@ -131,18 +133,18 @@ void UInventoryPanel::ResizePanel(TArray<UInventoryEntry*> InQueriedInventory)
 		requiredChildrenCount += ((queryCount % page->GetEntryCount()) > 0) ? 1 : 0;
 	}
 
-	if(requiredChildrenCount < Panel->GetChildrenCount())
+	if(requiredChildrenCount < MainPanel->GetChildrenCount())
 	{
-		// Panel is oversized
-		while (requiredChildrenCount < Panel->GetChildrenCount() && Panel->GetChildrenCount() > MinCount)
+		// MainPanel is oversized
+		while (requiredChildrenCount < MainPanel->GetChildrenCount() && MainPanel->GetChildrenCount() > MinCount)
 		{
-			Panel->RemoveChildAt(Panel->GetChildrenCount() - 1);
+			MainPanel->RemoveChildAt(MainPanel->GetChildrenCount() - 1);
 		}
 	}
-	else if (requiredChildrenCount > Panel->GetChildrenCount())
+	else if (requiredChildrenCount > MainPanel->GetChildrenCount())
 	{
-		//  Panel is undersized
-		while (requiredChildrenCount > Panel->GetChildrenCount())
+		//  MainPanel is undersized
+		while (requiredChildrenCount > MainPanel->GetChildrenCount())
 		{
 			AddInventoryWidget();
 		}

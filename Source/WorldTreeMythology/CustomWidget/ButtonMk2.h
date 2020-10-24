@@ -20,7 +20,7 @@ class WORLDTREEMYTHOLOGY_API UButtonMk2 : public UWidgetMk2
 	
 protected:
 	// This is the C++ managed Button
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget)) UButton* CPP_Button;
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget)) UButton* MainButton;
 
 	// This is the default button style set on the BP side
 	FButtonStyle DefaultStyle;
@@ -28,7 +28,7 @@ protected:
 	// This is the style to be swapped to when focused
 	FButtonStyle FocusedStyle;
 
-	// Pointer to the current style assigned to CPP_Button
+	// Pointer to the current style assigned to MainButton
 	FButtonStyle* CurrentStyle;
 
 	UMaterialInstanceDynamic* NormalMatDynamic;

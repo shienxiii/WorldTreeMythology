@@ -22,7 +22,7 @@ void UPanelWidgetMk2::NativeOnInitialized()
 
 void UPanelWidgetMk2::RebuildNavigation()
 {
-	for (UWidget* widget : Panel->GetAllChildren())
+	for (UWidget* widget : MainPanel->GetAllChildren())
 	{
 		BuildNavigation(widget);
 	}
@@ -45,22 +45,22 @@ void UPanelWidgetMk2::BuildNavigation(UWidget* InWidget)
 UWidget* UPanelWidgetMk2::AddChildToPanel(TSubclassOf<UWidget> InChildClass)
 {
 	UWidget* newChild = WidgetTree->ConstructWidget<UWidget>(InChildClass);
-	Panel->AddChild(newChild);
+	MainPanel->AddChild(newChild);
 	return newChild;
 }
 
 UWidget* UPanelWidgetMk2::GetChildAt(int32 ChildIndex)
 {
-	if (ChildIndex >= Panel->GetChildrenCount()) { return nullptr; }
+	if (ChildIndex >= MainPanel->GetChildrenCount()) { return nullptr; }
 
-	return Panel->GetChildAt(ChildIndex);
+	return MainPanel->GetChildAt(ChildIndex);
 }
 
 int32 UPanelWidgetMk2::GetChildIndex(UWidget* InWidget)
 {
 	if (!InWidget) { return INDEX_NONE; }
 
-	int32 index = Panel->GetAllChildren().IndexOfByPredicate([InWidget](const UWidget* widget)
+	int32 index = MainPanel->GetAllChildren().IndexOfByPredicate([InWidget](const UWidget* widget)
 		{
 			return widget == InWidget;
 		});
@@ -77,13 +77,13 @@ UWidget* UPanelWidgetMk2::NavigateWidget(EUINavigation InNavigation)
 	if (InNavigation == EUINavigation::Down || InNavigation == EUINavigation::Right)
 	{
 		index++;
-		index %= Panel->GetChildrenCount();
+		index %= MainPanel->GetChildrenCount();
 	}
 	else
 	{
 		index--;
-		index = index > -1 ? index : Panel->GetChildrenCount() - 1;
+		index = index > -1 ? index : MainPanel->GetChildrenCount() - 1;
 	}
 
-	return Panel->GetChildAt(index);
+	return MainPanel->GetChildAt(index);
 }
