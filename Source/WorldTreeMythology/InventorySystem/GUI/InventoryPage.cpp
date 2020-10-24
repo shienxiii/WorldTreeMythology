@@ -11,15 +11,9 @@ void UInventoryPage::NativeOnInitialized()
 	InitializePage();
 }
 
-void UInventoryPage::SynchronizeProperties()
+void UInventoryPage::NativePreConstruct()
 {
-	Super::SynchronizeProperties();
-
-	if (bIsEditor)
-	{
-		// Run InitializePage() for editor preview
-		InitializePage();
-	}
+	InitializePage();
 }
 
 void UInventoryPage::InitializePage()

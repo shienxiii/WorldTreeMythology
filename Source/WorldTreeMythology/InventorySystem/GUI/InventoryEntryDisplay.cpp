@@ -12,11 +12,6 @@ void UInventoryEntryDisplay::NativeOnInitialized()
 void UInventoryEntryDisplay::SynchronizeProperties()
 {
 	Super::SynchronizeProperties();
-
-	if (bIsEditor)
-	{
-		// Run editor preview code
-	}
 }
 
 void UInventoryEntryDisplay::NativeRefresh(TArray<UInventoryEntry*> InQuery)

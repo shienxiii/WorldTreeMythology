@@ -31,8 +31,6 @@ void UButtonMk2::NativeOnInitialized()
         MainButton->OnHovered.AddDynamic(this, &UButtonMk2::NativeHoverEvent);
         MainButton->OnClicked.AddDynamic(this, &UButtonMk2::NativeClickEvent);
     }
-
-    bIsEditor = false;
 }
 
 void UButtonMk2::NativeOnAddedToFocusPath(const FFocusEvent& InFocusEvent)

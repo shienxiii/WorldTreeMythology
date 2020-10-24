@@ -16,9 +16,8 @@ UPanelWidgetMk2::UPanelWidgetMk2(const FObjectInitializer& ObjectInitializer) : 
 void UPanelWidgetMk2::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
-
-	bIsEditor = false; // Stop editor preview code from running
 }
+
 
 void UPanelWidgetMk2::RebuildNavigation()
 {
@@ -39,6 +38,9 @@ void UPanelWidgetMk2::BuildNavigation(UWidget* InWidget)
 	{
 		InWidget->SetNavigationRuleCustom(EUINavigation::Up, NavigatePrev);
 		InWidget->SetNavigationRuleCustom(EUINavigation::Down, NavigateNext);
+	}
+	else if (NavigationDirection == EPanelLayout::GRID)
+	{
 	}
 }
 

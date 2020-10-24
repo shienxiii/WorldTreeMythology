@@ -52,7 +52,7 @@ public:
 
 public:
 	void NativeOnInitialized() override;
-	void SynchronizeProperties() override;
+	void NativePreConstruct() override;
 
 
 	void InitializePanel();

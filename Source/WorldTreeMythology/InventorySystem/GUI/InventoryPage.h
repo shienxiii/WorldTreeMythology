@@ -27,7 +27,7 @@ protected:
 	FInventoryEntryEvent OnEntryClicked;
 public:
 	void NativeOnInitialized() override;
-	void SynchronizeProperties() override;
+	void NativePreConstruct() override;
 	void InitializePage();
 
 	uint8 GetEntryCount() { return EntryCount; }

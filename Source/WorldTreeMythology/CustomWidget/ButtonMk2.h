@@ -35,14 +35,6 @@ protected:
 	UMaterialInstanceDynamic* FocusedMatDynamic;
 	UMaterialInstanceDynamic* ClickMatDynamic;
 
-
-	/**
-	 * Used specifically to prevent SynchronizeProperties from running specific code during runtime.
-	 * SynchronizeProperties is executed on the editor everytime a UserWidget is compiled or modified, it can be used to preview how this page will look like.
-	 * bIsEditor is automatically to be set to false by NativeOnInitialized prevent SynchronizeProperties from running code which consumes resources unecessarily.
-	 */
-	bool bIsEditor = true;
-
 public:
 	UPROPERTY(BlueprintAssignable) FOnButtonHoverEvent OnHovered;
 	UPROPERTY(BlueprintAssignable) FOnButtonClickedEvent OnClicked;
@@ -50,8 +42,8 @@ public:
 public:
 	UButtonMk2(const FObjectInitializer& ObjectInitializer);
 
-
 	void NativeOnInitialized() override;
+
 	void NativeOnAddedToFocusPath(const FFocusEvent& InFocusEvent) override;
 	void NativeOnRemovedFromFocusPath(const FFocusEvent& InFocusEvent) override;
 

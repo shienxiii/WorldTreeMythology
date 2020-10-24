@@ -18,14 +18,9 @@ void UInventoryPanel::NativeOnInitialized()
 
 }
 
-void UInventoryPanel::SynchronizeProperties()
+void UInventoryPanel::NativePreConstruct()
 {
-	Super::SynchronizeProperties();
-
-	if (bIsEditor)
-	{
-		InitializePanel();
-	}
+	InitializePanel();
 }
 
 void UInventoryPanel::InitializePanel()

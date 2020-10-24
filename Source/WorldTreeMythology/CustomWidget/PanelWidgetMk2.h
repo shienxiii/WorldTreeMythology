@@ -31,12 +31,6 @@ protected:
 	// Points to the last user focused child under MainPanel
 	UWidget* LastFocusedChild = nullptr;
 
-	/**
-	 * Used specifically to prevent SynchronizeProperties from running specific code during runtime.
-	 * SynchronizeProperties is executed on the editor everytime a UserWidget is compiled or modified, it can be used to preview how this page will look like.
-	 * bIsEditor is automatically to be set to false by NativeOnInitialized prevent SynchronizeProperties from running code which consumes resources unecessarily.
-	 */
-	bool bIsEditor = true;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Panel Setup") EPanelLayout NavigationDirection = EPanelLayout::VERTICAL;
 	FCustomWidgetNavigationDelegate NavigateNext;
