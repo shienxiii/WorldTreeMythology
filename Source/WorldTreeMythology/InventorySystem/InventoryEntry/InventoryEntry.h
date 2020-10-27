@@ -17,8 +17,7 @@ class WORLDTREEMYTHOLOGY_API UInventoryEntry : public UObject
 	
 protected:
 	UPROPERTY(BlueprintReadOnly) TSubclassOf<AInventory> InventoryClass = NULL;
-	UPROPERTY(BlueprintReadOnly) uint8 Count = 0;
-	UPROPERTY(BlueprintReadOnly, EditAnywhere) uint8 MaxCount = 255;
+	UPROPERTY(BlueprintReadOnly) int32 Count = 0;
 
 	// Whether to set InventoryClass to NULL when Count == 0 on Remove()
 	UPROPERTY(BlueprintReadOnly, EditAnywhere) bool bNullOnEmpty = true;
@@ -27,7 +26,7 @@ public:
 	/**
 	 * Initializes the InventoryClass and Count variable if InventoryClass is NULL
 	 */
-	bool InitializeEntry(TSubclassOf<AInventory> InClass, uint8 InCount);
+	bool InitializeEntry(TSubclassOf<AInventory> InClass, int32 InCount);
 
 	/**
 	 * Attempt to increment InCount number of item to Count and return the number of item remaining if capacity is reached
@@ -36,21 +35,21 @@ public:
 	 * 
 	 * @return remainder of item not added to Count
 	 */
-	uint8 Add(uint8 InCount);
+	int32 Add(int32 InCount);
 
 	/**
 	 * Remove the InCount number of item from Count.
 	 * If Count reaches 0 and bNullOnEmpty is true, nullify this entry
 	 */
-	void Remove(uint8 InCount);
+	void Remove(int32 InCount);
 
 
 
 	TSubclassOf<AInventory> GetInventoryClass() { return InventoryClass; }
-	uint8 GetCount() { return Count; }
+	int32 GetCount() { return Count; }
 
 	// Gets the remaining increment that can be added to this InventoryEntry
-	UFUNCTION(BlueprintPure) uint8 GetRemainingCapacity() { return MaxCount - Count; }
+	UFUNCTION(BlueprintPure) int32 GetRemainingCapacity();
 
 	/** 
 	 * Check if the InventoryClass stored by this entry is a child of a base class

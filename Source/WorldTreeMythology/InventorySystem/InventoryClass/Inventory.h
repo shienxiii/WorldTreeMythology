@@ -22,7 +22,12 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Inventory") FString Name = "Some name";
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Inventory") FString Description;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Inventory") UTexture* Icon;
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Inventory") uint8 maxCarry = 255;
+
+	// This is the maximum count of this inventory class can be carried on the player inventory. Only applicable if bUniqueEntries == false in the holding InventoryList
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Inventory", meta = (ClampMin = "0.0", ClampMax = "100.0", UIMin = "0.0", UIMax = "100.0")) int32 maxCarry = 10;
+
+	// This is the maximum count of this inventory class can be stored in the player storage. Only applicable if bUniqueEntries == false in the holding InventoryList
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Inventory", meta = (ClampMin = "0.0", ClampMax = "1000.0", UIMin = "0.0", UIMax = "1000.0")) int32 maxStorage = 1000;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Inventory") UStaticMeshComponent* Mesh;
 	

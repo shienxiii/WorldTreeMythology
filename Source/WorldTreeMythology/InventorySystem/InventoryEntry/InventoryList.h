@@ -45,7 +45,7 @@ public:
 	 * Adds InCount number of the passed Inventory class and returns the assigned InventoryEntry if successful.
 	 * Inventory objects are added in their default state. To store unique traits of each Inventory object, use AddUnique()
 	 */
-	UFUNCTION(BlueprintCallable) UInventoryEntry* Add(TSubclassOf<AInventory> InClass, uint8 InCount = 1);
+	UFUNCTION(BlueprintCallable) UInventoryEntry* Add(TSubclassOf<AInventory> InClass, int32 InCount = 1);
 
 	/**
 	 * Adds a single unique entry for the passed Inventory class and returns a pointer to the entry.

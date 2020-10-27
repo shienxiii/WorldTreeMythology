@@ -29,7 +29,7 @@ UInventoryEntry* UInventoryList::CreateNewEntry()
 	return Inventory[i];
 }
 
-UInventoryEntry* UInventoryList::Add(TSubclassOf<AInventory> InClass, uint8 InCount)
+UInventoryEntry* UInventoryList::Add(TSubclassOf<AInventory> InClass, int32 InCount)
 {
 	// Test InClass eligibility
 	if (!CanStore(InClass)) { return nullptr; }

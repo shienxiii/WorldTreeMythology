@@ -3,7 +3,7 @@
 
 #include "InventoryEntry.h"
 
-bool UInventoryEntry::InitializeEntry(TSubclassOf<AInventory> InClass, uint8 InCount)
+bool UInventoryEntry::InitializeEntry(TSubclassOf<AInventory> InClass, int32 InCount)
 {
     // Only initialize if InventoryClass is NULL
     if (InventoryClass) { return false; }
@@ -14,16 +14,16 @@ bool UInventoryEntry::InitializeEntry(TSubclassOf<AInventory> InClass, uint8 InC
     return true;
 }
 
-uint8 UInventoryEntry::Add(uint8 InCount)
+int32 UInventoryEntry::Add(int32 InCount)
 {
-    uint8 remaining = InCount > GetRemainingCapacity() ? InCount - GetRemainingCapacity() : 0;
+    int32 remaining = InCount > GetRemainingCapacity() ? InCount - GetRemainingCapacity() : 0;
 
     Count += InCount - remaining;
 
     return remaining;
 }
 
-void UInventoryEntry::Remove(uint8 InCount)
+void UInventoryEntry::Remove(int32 InCount)
 {
     if (InCount > Count) { Count = 0; }
     else { Count -= InCount; }
@@ -33,6 +33,11 @@ void UInventoryEntry::Remove(uint8 InCount)
         InventoryClass = NULL;
         Count = 0;
     }
+}
+
+int32 UInventoryEntry::GetRemainingCapacity()
+{
+    return -1;
 }
 
 bool UInventoryEntry::IsChildOf(TSubclassOf<AInventory> InBaseClass)

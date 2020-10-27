@@ -26,7 +26,7 @@ void UInventoryComponent::AddInventoryListType(TSubclassOf<UInventoryList> InInv
 	Inventory.Add(NewObject<UInventoryList>((UObject*)GetTransientPackage(), InInventoryList));
 }
 
-bool UInventoryComponent::AddSubclassToInventory(TSubclassOf<AInventory> InInventory, uint8 InCount)
+bool UInventoryComponent::AddSubclassToInventory(TSubclassOf<AInventory> InInventory, int32 InCount)
 {
 	UInventoryList* list = GetInventoryListFor(InInventory);
 

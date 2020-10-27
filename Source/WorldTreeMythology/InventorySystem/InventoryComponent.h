@@ -33,7 +33,7 @@ public:
 	 * 
 	 * @return true if successfully added to Inventory
 	 */
-	UFUNCTION(BlueprintCallable) bool AddSubclassToInventory(TSubclassOf<AInventory> InInventory, uint8 InCount = 1);
+	UFUNCTION(BlueprintCallable) bool AddSubclassToInventory(TSubclassOf<AInventory> InInventory, int32 InCount = 1);
 
 	//UFUNCTION(BlueprintCallable) bool AddInventoryByEntry(UInventoryEntry* InInventoryEntry);
 
