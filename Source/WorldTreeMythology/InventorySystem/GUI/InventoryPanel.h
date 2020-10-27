@@ -58,10 +58,13 @@ public:
 	void InitializePanel();
 	UWidget* AddInventoryWidget();
 
+	// Set the InventoryComponent which this Panel will query from
 	UFUNCTION(BlueprintCallable) void SetInventoryComponent(UInventoryComponent* InInventoryComponent) { InventoryComponent = InInventoryComponent; }
+
+	// Set the default Inventory class to query if the query are called without explicitly stating the InSubclass parameter
 	UFUNCTION(BlueprintCallable) void SetDefaultQueriedClass(TSubclassOf<AInventory> InBaseClass) { DefaultQueriedSubclass = InBaseClass; }
 
-	// Create a GetAll() query
+	UFUNCTION(BlueprintCallable) void QueryListFor(TSubclassOf<AInventory> InSubclass = NULL);
 
 	/**
 	 * Query the InventoryComponent for InventoryEntry of objects that inherit from a subclass of Inventory.
@@ -94,8 +97,22 @@ public:
 	void ResizePanel(TArray<UInventoryEntry*> InQueriedInventory);
 
 
+	void SetFocusedChild(UWidget* InWidget) override;
+
+
 	virtual UWidget* NavigateWidget(EUINavigation InNavigation) override;
-	void SetLastFocusedChild(UWidget* InWidget) override;
+
+	/**
+	 * If InventoryWidget is of type InventoryPage, go to the previous page.
+	 * Optionally preserve the offset of the focused child
+	 */
+	UFUNCTION(BlueprintCallable) void PrevPage(bool bKeepOffset = true);
+
+	/**
+	 * If InventoryWidget is of type InventoryPage, go to the next page.
+	 * Optionally preserve the offset of the focused child
+	 */
+	UFUNCTION(BlueprintCallable) void NextPage(bool bKeepOffset = true);
 
 #pragma region Event
 	UFUNCTION() void NativeEntryHoverEvent(UInventoryEntry* InEntry);

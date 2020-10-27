@@ -22,6 +22,7 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Inventory") FString Name = "Some name";
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Inventory") FString Description;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Inventory") UTexture* Icon;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Inventory") uint8 maxCarry = 255;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Inventory") UStaticMeshComponent* Mesh;
 	

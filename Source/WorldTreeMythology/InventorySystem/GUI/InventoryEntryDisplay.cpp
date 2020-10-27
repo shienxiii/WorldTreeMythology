@@ -25,7 +25,10 @@ void UInventoryEntryDisplay::NativeRefresh(TArray<UInventoryEntry*> InQuery)
 	else
 	{
 		InventoryEntry = InQuery[QueryIndex];
-		SetTextureParameter(IconParameter, InventoryEntry->GetInventoryDefault()->GetIcon());
+		if (InventoryEntry->GetInventoryClass())
+		{
+			SetTextureParameter(IconParameter, InventoryEntry->GetInventoryDefault()->GetIcon());
+		}
 		MainButton->SetIsEnabled(true);
 	}
 

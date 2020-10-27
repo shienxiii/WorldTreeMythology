@@ -74,7 +74,7 @@ UWidget* UPanelWidgetMk2::AddChildToPanel(TSubclassOf<UWidget> InChildClass)
 	}
 
 
-	if (UWidgetMk2* widget = Cast<UWidgetMk2>(newChild)) { widget->BindOnWidgetFocused(this, "SetLastFocusedChild"); }
+	if (UWidgetMk2* widget = Cast<UWidgetMk2>(newChild)) { widget->BindOnWidgetFocused(this, "SetFocusedChild"); }
 
 	return newChild;
 }
@@ -96,6 +96,14 @@ int32 UPanelWidgetMk2::GetChildIndex(UWidget* InWidget)
 		});
 
 	return index;
+}
+
+FReply UPanelWidgetMk2::NativeOnFocusReceived(const FGeometry& InGeometry, const FFocusEvent& InFocusEvent)
+{
+	if (FocusedChild) { FocusedChild->SetFocus(); }
+	else if (MainPanel->GetChildrenCount() > 0) { MainPanel->GetChildAt(0)->SetFocus(); }
+
+	return Super::NativeOnFocusReceived(InGeometry, InFocusEvent);
 }
 
 UWidget* UPanelWidgetMk2::NavigateWidget(EUINavigation InNavigation)

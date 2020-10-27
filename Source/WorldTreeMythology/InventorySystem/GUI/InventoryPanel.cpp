@@ -71,6 +71,19 @@ UWidget* UInventoryPanel::AddInventoryWidget()
 	return widget;
 }
 
+void UInventoryPanel::QueryListFor(TSubclassOf<AInventory> InSubclass)
+{
+	if (!InventoryComponent) { return; }
+
+	if (InSubclass == NULL) { InSubclass = DefaultQueriedSubclass; }
+
+	if (UInventoryList* list = InventoryComponent->GetInventoryListFor(InSubclass))
+	{
+		TArray<UInventoryEntry*> entries = list->QueryForAll();
+		RefreshPanel(entries);
+	}
+}
+
 void UInventoryPanel::QueryFor(TSubclassOf<AInventory> InSubclass)
 {
 	if (!InventoryComponent) { return; }
@@ -148,6 +161,16 @@ void UInventoryPanel::ResizePanel(TArray<UInventoryEntry*> InQueriedInventory)
 
 }
 
+void UInventoryPanel::SetFocusedChild(UWidget* InWidget)
+{
+	Super::SetFocusedChild(InWidget);
+
+	if (ScrollPanel)
+	{
+		ScrollPanel->ScrollWidgetIntoView(FocusedChild, ScrollPanel->bAnimateWheelScrolling, ScrollPanel->NavigationDestination, ScrollPanel->NavigationScrollPadding);
+	}
+}
+
 UWidget* UInventoryPanel::NavigateWidget(EUINavigation InNavigation)
 {
 	UWidget* nextWidget = Super::NavigateWidget(InNavigation);
@@ -161,7 +184,7 @@ UWidget* UInventoryPanel::NavigateWidget(EUINavigation InNavigation)
 	UInventoryPage* nextPage = Cast<UInventoryPage>(nextWidget);
 	check(prevPage && nextPage);
 
-	int32 i = prevPage->GetChildIndex(prevPage->GetLastFocusedChild());
+	int32 i = prevPage->GetChildIndex(prevPage->GetFocusedChild());
 	check(i != INDEX_NONE);
 
 	nextWidget = nextPage->GetChildAt(i);
@@ -171,14 +194,22 @@ UWidget* UInventoryPanel::NavigateWidget(EUINavigation InNavigation)
 	return nextWidget;
 }
 
-void UInventoryPanel::SetLastFocusedChild(UWidget* InWidget)
+void UInventoryPanel::PrevPage(bool bKeepOffset)
 {
-	Super::SetLastFocusedChild(InWidget);
+	if (!InventoryWidget.Get()->IsChildOf<UInventoryPage>()) { return; }
 
-	if (ScrollPanel)
-	{
-		ScrollPanel->ScrollWidgetIntoView(FocusedChild, ScrollPanel->bAnimateWheelScrolling, ScrollPanel->NavigationDestination, ScrollPanel->NavigationScrollPadding);
-	}
+	UWidget* targetWidget = NavigateWidget(EUINavigation::Left);
+
+	targetWidget->SetFocus();
+}
+
+void UInventoryPanel::NextPage(bool bKeepOffset)
+{
+	if (!InventoryWidget.Get()->IsChildOf<UInventoryPage>()) { return; }
+
+	UWidget* targetWidget = NavigateWidget(EUINavigation::Right);
+
+	targetWidget->SetFocus();
 }
 
 void UInventoryPanel::NativeEntryHoverEvent(UInventoryEntry* InEntry)

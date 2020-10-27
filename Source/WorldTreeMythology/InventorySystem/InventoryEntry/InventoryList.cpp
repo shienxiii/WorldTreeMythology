@@ -89,7 +89,14 @@ UInventoryEntry* UInventoryList::AddUnique(TSubclassOf<AInventory> InClass)
 
 	if (!bUniqueEntries) { return Add(InClass, 1); }
 
-	UInventoryEntry* entry = CreateNewEntry();
+	// Find an InventoryEntry with the InventoryClass field set to NULL
+	int32 i = Inventory.IndexOfByPredicate([](UInventoryEntry* entry)
+		{
+			return entry->GetInventoryClass() == NULL;
+		});
+
+	UInventoryEntry* entry = i != INDEX_NONE ? Inventory[i] : CreateNewEntry();
+
 	entry->InitializeEntry(InClass, 1);
 
 	return entry;

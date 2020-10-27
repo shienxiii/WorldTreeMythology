@@ -17,9 +17,6 @@ class WORLDTREEMYTHOLOGY_API UInventoryComponent : public UActorComponent
 	GENERATED_BODY()
 
 protected:
-	// Determines all the InventoryList that this InventoryComponent will have
-	//TArray<TSubclassOf<UInventoryList>> InventoryListType;
-
 	// Array of InventoryList managed by this class. Set which InventoryList will go here on InventoryListType 
 	UPROPERTY(BlueprintReadOnly, Category = "Inventory") TArray<UInventoryList*> Inventory;
 public:	

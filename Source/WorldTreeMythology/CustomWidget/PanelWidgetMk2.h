@@ -65,8 +65,10 @@ public:
 	int32 GetChildIndex(UWidget* InWidget);
 	int32 GetChildrenCount() { return MainPanel->GetChildrenCount(); }
 
-	UFUNCTION() UWidget* GetLastFocusedChild() { return FocusedChild; }
-	UFUNCTION() virtual void SetLastFocusedChild(UWidget* InWidget) { FocusedChild = InWidget; }
+
+	FReply NativeOnFocusReceived(const FGeometry& InGeometry, const FFocusEvent& InFocusEvent);
+	UFUNCTION() UWidget* GetFocusedChild() { return FocusedChild; }
+	UFUNCTION() virtual void SetFocusedChild(UWidget* InWidget) { FocusedChild = InWidget; }
 	void ForgetLastFocusedChild() { FocusedChild = nullptr; }
 
 
