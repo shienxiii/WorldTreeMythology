@@ -3,7 +3,7 @@
 
 #include "InventoryEntry.h"
 
-bool UInventoryEntry::InitializeEntry(TSubclassOf<AInventory> InClass, int32 InCount)
+bool UInventoryEntry::InitializeEntry_Implementation(TSubclassOf<AInventory> InClass, int32 InCount)
 {
     // Only initialize if InventoryClass is NULL
     if (InventoryClass) { return false; }
@@ -16,11 +16,12 @@ bool UInventoryEntry::InitializeEntry(TSubclassOf<AInventory> InClass, int32 InC
 
 int32 UInventoryEntry::Add(int32 InCount)
 {
-    int32 remaining = InCount > GetRemainingCapacity() ? InCount - GetRemainingCapacity() : 0;
+    // Find if there are excess to coming in
+    int32 excess = InCount > GetRemainingCount() ? InCount - GetRemainingCount() : 0;
 
-    Count += InCount - remaining;
+    Count += (InCount - excess);
 
-    return remaining;
+    return excess;
 }
 
 void UInventoryEntry::Remove(int32 InCount)
@@ -35,9 +36,21 @@ void UInventoryEntry::Remove(int32 InCount)
     }
 }
 
-int32 UInventoryEntry::GetRemainingCapacity()
+int32 UInventoryEntry::GetRemainingCount()
 {
-    return -1;
+    return GetMaxCount() - Count;
+}
+
+int32 UInventoryEntry::GetMaxCount()
+{
+    if (!bIsStorage)
+    {
+        return GetInventoryDefault()->GetMaxCarry();
+    }
+    else
+    {
+        return GetInventoryDefault()->GetMaxStorage();;
+    }
 }
 
 bool UInventoryEntry::IsChildOf(TSubclassOf<AInventory> InBaseClass)

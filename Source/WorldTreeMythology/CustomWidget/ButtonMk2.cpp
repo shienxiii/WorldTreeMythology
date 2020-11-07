@@ -15,8 +15,12 @@ void UButtonMk2::NativeOnInitialized()
 
     DefaultStyle = MainButton->WidgetStyle;
     FocusedStyle = MainButton->WidgetStyle;
+    DisabledStyle = MainButton->WidgetStyle;
+
     DefaultStyle.SetHovered(DefaultStyle.Normal);
     FocusedStyle.SetNormal(FocusedStyle.Hovered);
+    DisabledStyle.SetNormal(DisabledStyle.Disabled);
+
 
     CurrentStyle = &DefaultStyle;
 
@@ -64,6 +68,28 @@ void UButtonMk2::SetTextureParameter(FName ParamName, UTexture* InTexture)
     FocusedStyle.Pressed.SetResourceObject(ClickMatDynamic);
 
     MainButton->SetStyle(*CurrentStyle);
+}
+
+void UButtonMk2::SetIsEnabled(bool InIsEnabled)
+{
+    bIsEnabled = InIsEnabled;
+
+    if (InIsEnabled) { EnableButton(); }
+    else { DisableButton(); }
+}
+
+void UButtonMk2::DisableButton()
+{
+    MainButton->SetIsEnabled(false);
+    MainButton->SetStyle(DisabledStyle);
+    CurrentStyle = &DisabledStyle;
+}
+
+void UButtonMk2::EnableButton()
+{
+    MainButton->SetIsEnabled(true);
+    MainButton->SetStyle(DefaultStyle);
+    CurrentStyle = &DefaultStyle;
 }
 
 FReply UButtonMk2::NativeOnFocusReceived(const FGeometry& InGeometry, const FFocusEvent& InFocusEvent)

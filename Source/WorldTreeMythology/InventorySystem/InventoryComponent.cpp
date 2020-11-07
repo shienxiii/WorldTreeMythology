@@ -23,7 +23,16 @@ void UInventoryComponent::AddInventoryListType(TSubclassOf<UInventoryList> InInv
 {
 	if (!InInventoryList) { return; }
 
-	Inventory.Add(NewObject<UInventoryList>((UObject*)GetTransientPackage(), InInventoryList));
+	int32 i = Inventory.Add(NewObject<UInventoryList>((UObject*)GetTransientPackage(), InInventoryList));
+	Inventory[i]->SetIsStorage(bIsStorage);
+}
+
+void UInventoryComponent::SetIsStorage(bool InIsStorage)
+{
+	for (UInventoryList* list : Inventory)
+	{
+		list->SetIsStorage(bIsStorage);
+	}
 }
 
 bool UInventoryComponent::AddSubclassToInventory(TSubclassOf<AInventory> InInventory, int32 InCount)

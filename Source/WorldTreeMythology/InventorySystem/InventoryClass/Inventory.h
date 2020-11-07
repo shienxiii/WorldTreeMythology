@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "Inventory.generated.h"
 
+class UInventoryEntry;
+
 /**
  * This class serves as the base class for all Inventory class.
  * It contains the basic protected access properties and public access functions for identification of an Inventory such as:
@@ -23,13 +25,12 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Inventory") FString Description;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Inventory") UTexture* Icon;
 
+
 	// This is the maximum count of this inventory class can be carried on the player inventory. Only applicable if bUniqueEntries == false in the holding InventoryList
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Inventory", meta = (ClampMin = "0.0", ClampMax = "100.0", UIMin = "0.0", UIMax = "100.0")) int32 maxCarry = 10;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Inventory", meta = (ClampMin = "0", ClampMax = "1000", UIMin = "0", UIMax = "1000")) int32 maxCarry = 10;
 
 	// This is the maximum count of this inventory class can be stored in the player storage. Only applicable if bUniqueEntries == false in the holding InventoryList
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Inventory", meta = (ClampMin = "0.0", ClampMax = "1000.0", UIMin = "0.0", UIMax = "1000.0")) int32 maxStorage = 1000;
-
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Inventory") UStaticMeshComponent* Mesh;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Inventory", meta = (ClampMin = "0", ClampMax = "1000", UIMin = "0", UIMax = "1000")) int32 maxStorage = 1000;
 	
 public:	
 	// Sets default values for this actor's properties
@@ -39,5 +40,6 @@ public:
 	FString GetDescription() { return Description; }
 	UTexture* GetIcon() { return Icon; }
 
-	UStaticMeshComponent* GetMesh() { return Mesh; }
+	int32 GetMaxCarry() { return maxCarry; }
+	int32 GetMaxStorage() { return maxStorage; }
 };

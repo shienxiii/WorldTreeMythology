@@ -25,6 +25,7 @@ void UInventoryList::MofifyListSize(int32 InCount)
 UInventoryEntry* UInventoryList::CreateNewEntry()
 {
 	int i = Inventory.Add(NewObject<UInventoryEntry>(this, EntryClass));
+	Inventory[i]->SetIsStorage(bIsStorage);
 
 	return Inventory[i];
 }

@@ -33,7 +33,12 @@ protected:
 
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Panel Setup") EPanelLayout PanelLayout = EPanelLayout::VERTICAL;
+
+	// Maximum number of child per row
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Panel Setup", meta = (EditCondition = "PanelLayout == EPanelLayout::GRID")) uint8 GridX = 5;
+
+	// Maximum number of child per column
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Panel Setup", meta = (EditCondition = "PanelLayout == EPanelLayout::GRID")) uint8 GridY = 4;
 
 	FCustomWidgetNavigationDelegate NavigateNext;
 	FCustomWidgetNavigationDelegate NavigatePrev;
@@ -65,6 +70,10 @@ public:
 	int32 GetChildIndex(UWidget* InWidget);
 	int32 GetChildrenCount() { return MainPanel->GetChildrenCount(); }
 
+#pragma region GridCheck
+	bool IsValidIndex(int32 InIndex);
+	bool OnValidRow(int32 InIndex);
+#pragma endregion
 
 	FReply NativeOnFocusReceived(const FGeometry& InGeometry, const FFocusEvent& InFocusEvent);
 	UFUNCTION() UWidget* GetFocusedChild() { return FocusedChild; }
@@ -74,6 +83,7 @@ public:
 
 	UFUNCTION() virtual UWidget* NavigateWidget(EUINavigation InNavigation);
 	UFUNCTION() virtual UWidget* NavigateGridPanel(EUINavigation InNavigation);
+	
 
 #if WITH_EDITOR
 	const FText GetPaletteCategory() override { return FText::FromString("UMG Mk2"); }

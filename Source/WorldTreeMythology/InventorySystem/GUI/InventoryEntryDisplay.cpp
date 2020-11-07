@@ -20,7 +20,7 @@ void UInventoryEntryDisplay::NativeRefresh(TArray<UInventoryEntry*> InQuery)
 	{
 		InventoryEntry = nullptr;
 		SetTextureParameter(IconParameter, NULL);
-		MainButton->SetIsEnabled(bEnableOnNull);
+		SetIsEnabled(bEnableOnNull);
 	}
 	else
 	{
@@ -29,7 +29,7 @@ void UInventoryEntryDisplay::NativeRefresh(TArray<UInventoryEntry*> InQuery)
 		{
 			SetTextureParameter(IconParameter, InventoryEntry->GetInventoryDefault()->GetIcon());
 		}
-		MainButton->SetIsEnabled(true);
+		SetIsEnabled(true);
 	}
 
 	OnRefresh();

@@ -18,7 +18,9 @@ class WORLDTREEMYTHOLOGY_API UInventoryComponent : public UActorComponent
 
 protected:
 	// Array of InventoryList managed by this class. Set which InventoryList will go here on InventoryListType 
-	UPROPERTY(BlueprintReadOnly, Category = "Inventory") TArray<UInventoryList*> Inventory;
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Inventory") TArray<UInventoryList*> Inventory;
+
+	UPROPERTY(EditAnywhere, Category = "Inventory") bool bIsStorage = false;
 public:	
 	// Sets default values for this component's properties
 	UInventoryComponent();
@@ -26,6 +28,7 @@ public:
 
 	// Call at Construct script to initialize the InventoryList this InventoryComponent will have
 	UFUNCTION(BlueprintCallable) void AddInventoryListType(TSubclassOf<UInventoryList> InInventoryList);
+	UFUNCTION(BlueprintCallable) void SetIsStorage(bool InIsStorage = false);
 	
 	/**
 	 * Add Inventory to it's respective list. Added Inventory will be in their default base form.

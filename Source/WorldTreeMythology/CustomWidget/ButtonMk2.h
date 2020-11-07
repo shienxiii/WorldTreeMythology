@@ -28,6 +28,9 @@ protected:
 	// This is the style to be swapped to when focused
 	FButtonStyle FocusedStyle;
 
+	// This is the style to be swapped to when disabled
+	FButtonStyle DisabledStyle;
+
 	// Pointer to the current style assigned to MainButton
 	FButtonStyle* CurrentStyle;
 
@@ -48,6 +51,10 @@ public:
 	void NativeOnRemovedFromFocusPath(const FFocusEvent& InFocusEvent) override;
 
 	void SetTextureParameter(FName ParamName, UTexture* InTexture);
+	void SetIsEnabled(bool InIsEnabled);
+	void DisableButton();
+	void EnableButton();
+
 
 	FReply NativeOnFocusReceived(const FGeometry& InGeometry, const FFocusEvent& InFocusEvent) override;
 

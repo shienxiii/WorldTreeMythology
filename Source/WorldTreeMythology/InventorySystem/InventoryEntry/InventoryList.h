@@ -9,6 +9,7 @@
 
 /**
  * This class holds an array of InventoryEntry and manages querying to sorting of the items in the array.
+ * An InventoryList object is to be initialized inside an InventoryComponent.
  */
 UCLASS(Blueprintable, BlueprintType)
 class WORLDTREEMYTHOLOGY_API UInventoryList : public UObject
@@ -30,6 +31,8 @@ protected:
 	 * Set to true for Inventory that has unique properties, such as durability or player customization
 	 */
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Inventory") bool bUniqueEntries = false;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Inventory") bool bIsStorage = false;
 
 public:
 	/**
@@ -84,4 +87,6 @@ public:
 	 * Checks to see if the passed class type can be stored in this InventoryList
 	 */
 	UFUNCTION(BlueprintCallable) bool CanStore(TSubclassOf<AInventory> InInventoryClass);
+
+	void SetIsStorage(bool InIsStorage) { bIsStorage = InIsStorage; }
 };

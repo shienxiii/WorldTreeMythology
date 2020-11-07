@@ -56,7 +56,7 @@ UWidget* UPanelWidgetMk2::AddChildToPanel(TSubclassOf<UWidget> InChildClass)
 	int i = MainPanel->GetChildrenCount();
 
 	UWidget* newChild = WidgetTree->ConstructWidget<UWidget>(InChildClass);
-
+	
 	if (UGridPanel* grid = Cast<UGridPanel>(MainPanel))
 	{
 		// Get x position
@@ -66,7 +66,6 @@ UWidget* UPanelWidgetMk2::AddChildToPanel(TSubclassOf<UWidget> InChildClass)
 		int y = i / GridX;
 
 		grid->AddChildToGrid(newChild, y, x);
-		//PlaceOnGrid(newChild,)
 	}
 	else
 	{
@@ -96,6 +95,17 @@ int32 UPanelWidgetMk2::GetChildIndex(UWidget* InWidget)
 		});
 
 	return index;
+}
+
+bool UPanelWidgetMk2::IsValidIndex(int32 InIndex)
+{
+	return MainPanel->GetChildAt(InIndex) && MainPanel->GetChildAt(InIndex)->bIsEnabled;
+}
+
+bool UPanelWidgetMk2::OnValidRow(int32 InIndex)
+{
+	int rowStart = (InIndex / GridX) * GridX;
+	return IsValidIndex(rowStart);
 }
 
 FReply UPanelWidgetMk2::NativeOnFocusReceived(const FGeometry& InGeometry, const FFocusEvent& InFocusEvent)
@@ -131,24 +141,36 @@ UWidget* UPanelWidgetMk2::NavigateGridPanel(EUINavigation InNavigation)
 	int32 index = GetChildIndex(FocusedChild);
 	if (index == INDEX_NONE) { return nullptr; }
 
+
 	// circular navigation for now
 	switch (InNavigation)
 	{
 	case EUINavigation::Left:
-		index -= (index % GridX) == 0 ? -(GridX - 1) : 1;
+		do { index -= (index % GridX) == 0 ? -(GridX - 1) : 1; } while (!IsValidIndex(index));
 		break;
 	case EUINavigation::Right:
-		index += (index % GridX) == (GridX - 1) ? -(GridX - 1) : 1;
+		do { index += (index % GridX) == (GridX - 1) ? -(GridX - 1) : 1; } while (!IsValidIndex(index));
 		break;
 	case EUINavigation::Up:
-		index -= GridX;
-		index = index > -1 ? index : MainPanel->GetChildrenCount() + index;
+		do
+		{
+			index -= GridX;
+			index = index > -1 ? index : (GridX * GridY) + index;
+		} while (!OnValidRow(index));
+
+		while (!IsValidIndex(index)) { index -= (index % GridX) == 0 ? -(GridX - 1) : 1; }
+
 		break;
 	case EUINavigation::Down:
-		index += GridX;
-		index %= MainPanel->GetChildrenCount();
-		break;
+		do
+		{
+			index += GridX;
+			index %= (GridX * GridY);
+		} while (!OnValidRow(index));
 
+		while (!IsValidIndex(index)) { index -= (index % GridX) == 0 ? -(GridX - 1) : 1; }
+
+		break;
 	}
 
 	return MainPanel->GetChildAt(index);

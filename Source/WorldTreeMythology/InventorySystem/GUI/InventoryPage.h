@@ -19,7 +19,7 @@ protected:
 	// This is the InventoryEntryDisplay class that this page will be built with
 	UPROPERTY(EditAnywhere, Category = "Panel Setup") TSubclassOf<UInventoryEntryDisplay> EntryClass = NULL;
 
-	UPROPERTY(EditAnywhere, Category = "Panel Setup") uint8 EntryCount = 5;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Panel Setup", meta = (EditCondition = "PanelLayout != EPanelLayout::GRID")) uint8 EntryCount = 5;
 
 	UPROPERTY(BlueprintReadOnly) int32 PageNum = -1;
 
@@ -30,7 +30,7 @@ public:
 	void NativePreConstruct() override;
 	void InitializePage();
 
-	uint8 GetEntryCount() { return EntryCount; }
+	uint8 GetEntryCount() { return PanelLayout == EPanelLayout::GRID ? GridX * GridY : EntryCount; }
 	void SetPageNum(int32 InPageNum);
 
 	void RefreshPage(TArray<UInventoryEntry*> InQuery);

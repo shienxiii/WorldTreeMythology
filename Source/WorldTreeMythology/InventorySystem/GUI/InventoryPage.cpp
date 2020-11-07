@@ -22,7 +22,7 @@ void UInventoryPage::InitializePage()
 
 	MainPanel->ClearChildren();
 
-	for (int i = 0; i < EntryCount; i++)
+	for (int i = 0; i < GetEntryCount(); i++)
 	{
 		UInventoryEntryDisplay* entry = Cast<UInventoryEntryDisplay>(AddChildToPanel(EntryClass));
 
@@ -39,7 +39,7 @@ void UInventoryPage::SetPageNum(int32 InPageNum)
 
 	for (int i = 0; i < entries.Num(); i++)
 	{
-		Cast<UInventoryEntryDisplay>(entries[i])->SetQueryIndex((PageNum * EntryCount) + i);
+		Cast<UInventoryEntryDisplay>(entries[i])->SetQueryIndex((PageNum * GetEntryCount()) + i);
 	}
 }
 
