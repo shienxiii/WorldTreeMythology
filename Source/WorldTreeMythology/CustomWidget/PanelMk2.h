@@ -6,7 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/PanelWidget.h"
 #include "WidgetMk2.h"
-#include "PanelWidgetMk2.generated.h"
+#include "Slate/SPanelMk2.h"
+#include "PanelMk2.generated.h"
 
 UENUM(BlueprintType)
 enum class EPanelLayout : uint8
@@ -20,12 +21,14 @@ enum class EPanelLayout : uint8
  * 
  */
 UCLASS(Abstract, BlueprintType, Blueprintable)
-class WORLDTREEMYTHOLOGY_API UPanelWidgetMk2 : public UWidgetMk2
+class WORLDTREEMYTHOLOGY_API UPanelMk2 : public UWidgetMk2
 {
 	GENERATED_BODY()
 
 protected:
-	// This is the C++ handled PanelWidget that will manage the UI navigation
+	TSharedPtr<SPanelMk2> PanelSlate;
+
+	// This is the C++ handled PanelWidget
 	UPROPERTY(meta = (BindWidget)) UPanelWidget* MainPanel;
 
 	// Points to the last user focused child under MainPanel
@@ -45,7 +48,7 @@ protected:
 
 	FCustomWidgetNavigationDelegate NavigateGrid;
 public:
-	UPanelWidgetMk2(const FObjectInitializer& ObjectInitializer);
+	UPanelMk2(const FObjectInitializer& ObjectInitializer);
 	void NativeOnInitialized() override;
 
 	// Build Navigation for existing child under MainPanel

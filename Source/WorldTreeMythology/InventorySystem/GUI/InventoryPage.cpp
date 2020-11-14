@@ -24,7 +24,7 @@ void UInventoryPage::InitializePage()
 
 	for (int i = 0; i < GetEntryCount(); i++)
 	{
-		UInventoryEntryDisplay* entry = Cast<UInventoryEntryDisplay>(AddChildToPanel(EntryClass));
+		UInventoryEntryButton* entry = Cast<UInventoryEntryButton>(AddChildToPanel(EntryClass));
 
 		entry->BindHoverDelegate(this, "EntryHoverEvent");
 		entry->BindClickDelegate(this, "EntryClickEvent");
@@ -39,7 +39,7 @@ void UInventoryPage::SetPageNum(int32 InPageNum)
 
 	for (int i = 0; i < entries.Num(); i++)
 	{
-		Cast<UInventoryEntryDisplay>(entries[i])->SetQueryIndex((PageNum * GetEntryCount()) + i);
+		Cast<UInventoryEntryButton>(entries[i])->SetQueryIndex((PageNum * GetEntryCount()) + i);
 	}
 }
 
@@ -49,7 +49,7 @@ void UInventoryPage::RefreshPage(TArray<UInventoryEntry*> InQuery)
 
 	for (int i = 0; i < entries.Num(); i++)
 	{
-		Cast<UInventoryEntryDisplay>(entries[i])->NativeRefresh(InQuery);
+		Cast<UInventoryEntryButton>(entries[i])->NativeRefresh(InQuery);
 	}
 }
 

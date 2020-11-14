@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "../../CustomWidget/PanelWidgetMk2.h"
+#include "../../CustomWidget/PanelMk2.h"
 #include "../InventoryComponent.h"
 #include "InventoryPanel.generated.h"
 
@@ -17,7 +17,7 @@ class UScrollBox;
  * 
  */
 UCLASS(Abstract, BlueprintType)
-class WORLDTREEMYTHOLOGY_API UInventoryPanel : public UPanelWidgetMk2
+class WORLDTREEMYTHOLOGY_API UInventoryPanel : public UPanelMk2
 {
 	GENERATED_BODY()
 	

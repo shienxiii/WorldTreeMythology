@@ -5,7 +5,7 @@
 #include "Components/ScrollBox.h"
 #include "Components/ScrollBoxSlot.h"
 #include "InventoryPage.h"
-#include "InventoryEntryDisplay.h"
+#include "InventoryEntryButton.h"
 
 void UInventoryPanel::NativeOnInitialized()
 {
@@ -30,7 +30,7 @@ void UInventoryPanel::InitializePanel()
 	MainPanel->ClearChildren();
 
 	if (!InventoryWidget ||
-		(!InventoryWidget->IsChildOf(UInventoryPage::StaticClass()) && !InventoryWidget->IsChildOf(UInventoryEntryDisplay::StaticClass()))
+		(!InventoryWidget->IsChildOf(UInventoryPage::StaticClass()) && !InventoryWidget->IsChildOf(UInventoryEntryButton::StaticClass()))
 		)
 	{
 		return;
@@ -59,7 +59,7 @@ UWidget* UInventoryPanel::AddInventoryWidget()
 	}
 	else
 	{
-		UInventoryEntryDisplay* entry = Cast<UInventoryEntryDisplay>(widget);
+		UInventoryEntryButton* entry = Cast<UInventoryEntryButton>(widget);
 
 		entry->BindHoverDelegate(this, "NativeEntryHoverEvent");
 		entry->BindClickDelegate(this, "NativeEntryClickEvent");
@@ -118,9 +118,9 @@ void UInventoryPanel::RefreshPanel(TArray<UInventoryEntry*>& InQueriedInventory)
 		{
 			Cast<UInventoryPage>(widget)->RefreshPage(InQueriedInventory);
 		}
-		else if (InventoryWidget.Get()->IsChildOf<UInventoryEntryDisplay>())
+		else if (InventoryWidget.Get()->IsChildOf<UInventoryEntryButton>())
 		{
-			Cast<UInventoryEntryDisplay>(widget)->NativeRefresh(InQueriedInventory);
+			Cast<UInventoryEntryButton>(widget)->NativeRefresh(InQueriedInventory);
 		}
 	}
 }
@@ -175,7 +175,7 @@ UWidget* UInventoryPanel::NavigateWidget(EUINavigation InNavigation)
 {
 	UWidget* nextWidget = Super::NavigateWidget(InNavigation);
 
-	if (nextWidget->GetClass()->IsChildOf(UInventoryEntryDisplay::StaticClass()))
+	if (nextWidget->GetClass()->IsChildOf(UInventoryEntryButton::StaticClass()))
 	{
 		return nextWidget;
 	}

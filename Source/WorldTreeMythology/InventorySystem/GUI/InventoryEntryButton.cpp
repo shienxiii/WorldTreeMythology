@@ -1,20 +1,20 @@
 // Copyright of Maple Game Studio
 
 
-#include "InventoryEntryDisplay.h"
+#include "InventoryEntryButton.h"
 #include "Components/Button.h"
 
-void UInventoryEntryDisplay::NativeOnInitialized()
+void UInventoryEntryButton::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 }
 
-void UInventoryEntryDisplay::SynchronizeProperties()
+void UInventoryEntryButton::SynchronizeProperties()
 {
 	Super::SynchronizeProperties();
 }
 
-void UInventoryEntryDisplay::NativeRefresh(TArray<UInventoryEntry*> InQuery)
+void UInventoryEntryButton::NativeRefresh(TArray<UInventoryEntry*> InQuery)
 {
 	if (QueryIndex >= InQuery.Num())
 	{
@@ -35,7 +35,7 @@ void UInventoryEntryDisplay::NativeRefresh(TArray<UInventoryEntry*> InQuery)
 	OnRefresh();
 }
 
-bool UInventoryEntryDisplay::BindHoverDelegate(UObject* InObject, FName InFuncName)
+bool UInventoryEntryButton::BindHoverDelegate(UObject* InObject, FName InFuncName)
 {
 	OnHovered.Unbind();
 
@@ -44,7 +44,7 @@ bool UInventoryEntryDisplay::BindHoverDelegate(UObject* InObject, FName InFuncNa
 	return OnHovered.IsBound();
 }
 
-bool UInventoryEntryDisplay::BindClickDelegate(UObject* InObject, FName InFuncName)
+bool UInventoryEntryButton::BindClickDelegate(UObject* InObject, FName InFuncName)
 {
 	OnClicked.Unbind();
 
@@ -53,13 +53,13 @@ bool UInventoryEntryDisplay::BindClickDelegate(UObject* InObject, FName InFuncNa
 	return OnClicked.IsBound();
 }
 
-void UInventoryEntryDisplay::NativeHoverEvent()
+void UInventoryEntryButton::NativeHoverEvent()
 {
 	Super::NativeHoverEvent();
 	OnHovered.ExecuteIfBound(InventoryEntry);
 }
 
-void UInventoryEntryDisplay::NativeClickEvent()
+void UInventoryEntryButton::NativeClickEvent()
 {
 	Super::NativeClickEvent();
 	OnClicked.ExecuteIfBound(InventoryEntry);

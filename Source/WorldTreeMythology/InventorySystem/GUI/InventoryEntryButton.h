@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "../../CustomWidget/ButtonMk2.h"
 #include "../InventoryEntry/InventoryEntry.h"
-#include "InventoryEntryDisplay.generated.h"
+#include "InventoryEntryButton.generated.h"
 
 DECLARE_DELEGATE_OneParam(FInventoryEntryEvent, UInventoryEntry*)
 
@@ -13,7 +13,7 @@ DECLARE_DELEGATE_OneParam(FInventoryEntryEvent, UInventoryEntry*)
  * 
  */
 UCLASS(Abstract, BlueprintType)
-class WORLDTREEMYTHOLOGY_API UInventoryEntryDisplay : public UButtonMk2
+class WORLDTREEMYTHOLOGY_API UInventoryEntryButton : public UButtonMk2
 {
 	GENERATED_BODY()
 	

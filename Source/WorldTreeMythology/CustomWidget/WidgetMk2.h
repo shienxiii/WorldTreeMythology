@@ -23,6 +23,7 @@ protected:
 public:
 	bool BindOnWidgetFocused(UObject* InObject, FName InFuncName);
 	void NativeOnAddedToFocusPath(const FFocusEvent& InFocusEvent) override;
+	TSharedRef<SWidget> RebuildSlate() { return RebuildWidget(); }
 
 #if WITH_EDITOR
 	const FText GetPaletteCategory() override { return FText::FromString("UMG Mk2"); }

@@ -1,12 +1,12 @@
 // Copyright of Maple Game Studio
 
 
-#include "PanelWidgetMk2.h"
+#include "PanelMk2.h"
 #include "Components/PanelWidget.h"
 #include "Components/GridPanel.h"
 #include "Blueprint/WidgetTree.h"
 
-UPanelWidgetMk2::UPanelWidgetMk2(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+UPanelMk2::UPanelMk2(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	bIsFocusable = true;
 
@@ -16,13 +16,13 @@ UPanelWidgetMk2::UPanelWidgetMk2(const FObjectInitializer& ObjectInitializer) : 
 	NavigateGrid.BindUFunction(this, TEXT("NavigateGridPanel"));
 }
 
-void UPanelWidgetMk2::NativeOnInitialized()
+void UPanelMk2::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 }
 
 
-void UPanelWidgetMk2::RebuildNavigation()
+void UPanelMk2::RebuildNavigation()
 {
 	for (UWidget* widget : MainPanel->GetAllChildren())
 	{
@@ -30,7 +30,7 @@ void UPanelWidgetMk2::RebuildNavigation()
 	}
 }
 
-void UPanelWidgetMk2::BuildNavigation(UWidget* InWidget)
+void UPanelMk2::BuildNavigation(UWidget* InWidget)
 {
 	if (PanelLayout == EPanelLayout::HORIZONTAL)
 	{
@@ -51,7 +51,7 @@ void UPanelWidgetMk2::BuildNavigation(UWidget* InWidget)
 	}
 }
 
-UWidget* UPanelWidgetMk2::AddChildToPanel(TSubclassOf<UWidget> InChildClass)
+UWidget* UPanelMk2::AddChildToPanel(TSubclassOf<UWidget> InChildClass)
 {
 	int i = MainPanel->GetChildrenCount();
 
@@ -78,14 +78,14 @@ UWidget* UPanelWidgetMk2::AddChildToPanel(TSubclassOf<UWidget> InChildClass)
 	return newChild;
 }
 
-UWidget* UPanelWidgetMk2::GetChildAt(int32 ChildIndex)
+UWidget* UPanelMk2::GetChildAt(int32 ChildIndex)
 {
 	if (ChildIndex >= MainPanel->GetChildrenCount()) { return nullptr; }
 
 	return MainPanel->GetChildAt(ChildIndex);
 }
 
-int32 UPanelWidgetMk2::GetChildIndex(UWidget* InWidget)
+int32 UPanelMk2::GetChildIndex(UWidget* InWidget)
 {
 	if (!InWidget) { return INDEX_NONE; }
 
@@ -97,18 +97,18 @@ int32 UPanelWidgetMk2::GetChildIndex(UWidget* InWidget)
 	return index;
 }
 
-bool UPanelWidgetMk2::IsValidIndex(int32 InIndex)
+bool UPanelMk2::IsValidIndex(int32 InIndex)
 {
 	return MainPanel->GetChildAt(InIndex) && MainPanel->GetChildAt(InIndex)->bIsEnabled;
 }
 
-bool UPanelWidgetMk2::OnValidRow(int32 InIndex)
+bool UPanelMk2::OnValidRow(int32 InIndex)
 {
 	int rowStart = (InIndex / GridX) * GridX;
 	return IsValidIndex(rowStart);
 }
 
-FReply UPanelWidgetMk2::NativeOnFocusReceived(const FGeometry& InGeometry, const FFocusEvent& InFocusEvent)
+FReply UPanelMk2::NativeOnFocusReceived(const FGeometry& InGeometry, const FFocusEvent& InFocusEvent)
 {
 	if (FocusedChild) { FocusedChild->SetFocus(); }
 	else if (MainPanel->GetChildrenCount() > 0) { MainPanel->GetChildAt(0)->SetFocus(); }
@@ -116,7 +116,7 @@ FReply UPanelWidgetMk2::NativeOnFocusReceived(const FGeometry& InGeometry, const
 	return Super::NativeOnFocusReceived(InGeometry, InFocusEvent);
 }
 
-UWidget* UPanelWidgetMk2::NavigateWidget(EUINavigation InNavigation)
+UWidget* UPanelMk2::NavigateWidget(EUINavigation InNavigation)
 {
 	int32 index = GetChildIndex(FocusedChild);
 	if (index == INDEX_NONE) { return nullptr; }
@@ -136,7 +136,7 @@ UWidget* UPanelWidgetMk2::NavigateWidget(EUINavigation InNavigation)
 	return MainPanel->GetChildAt(index);
 }
 
-UWidget* UPanelWidgetMk2::NavigateGridPanel(EUINavigation InNavigation)
+UWidget* UPanelMk2::NavigateGridPanel(EUINavigation InNavigation)
 {
 	int32 index = GetChildIndex(FocusedChild);
 	if (index == INDEX_NONE) { return nullptr; }
@@ -175,3 +175,27 @@ UWidget* UPanelWidgetMk2::NavigateGridPanel(EUINavigation InNavigation)
 
 	return MainPanel->GetChildAt(index);
 }
+
+
+//TSharedRef<SWidget> UPanelMk2::RebuildWidget()
+//{
+//	TSubclassOf<UUserWidget> widget = ButtonBP->GeneratedClass;
+//	if (widget) { UE_LOG(LogTemp, Warning, TEXT("widget")); }
+//	else { UE_LOG(LogTemp, Warning, TEXT("null widget")); }
+//
+//	UUserWidget* createdWidget = CreateWidget<UUserWidget>(GetWorld(), widget);
+//	TSharedPtr<SWidget> button;
+//	if (createdWidget)
+//	{
+//		button = createdWidget->TakeWidget();
+//	}
+//
+//	if (button) { UE_LOG(LogTemp, Warning, TEXT("valid cached widget")); }
+//	else { UE_LOG(LogTemp, Warning, TEXT("invalid cached widget")); }
+//
+//	PanelSlate = SNew(SPanelMk2)
+//		.OwningPlayer(nullptr)
+//		.Button(button)
+//		;
+//	return PanelSlate.ToSharedRef();
+//}

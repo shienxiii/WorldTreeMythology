@@ -3,21 +3,21 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "../../CustomWidget/PanelWidgetMk2.h"
-#include "InventoryEntryDisplay.h"
+#include "../../CustomWidget/PanelMk2.h"
+#include "InventoryEntryButton.h"
 #include "InventoryPage.generated.h"
 
 /**
  * 
  */
 UCLASS(Abstract, BlueprintType)
-class WORLDTREEMYTHOLOGY_API UInventoryPage : public UPanelWidgetMk2
+class WORLDTREEMYTHOLOGY_API UInventoryPage : public UPanelMk2
 {
 	GENERATED_BODY()
 	
 protected:
 	// This is the InventoryEntryDisplay class that this page will be built with
-	UPROPERTY(EditAnywhere, Category = "Panel Setup") TSubclassOf<UInventoryEntryDisplay> EntryClass = NULL;
+	UPROPERTY(EditAnywhere, Category = "Panel Setup") TSubclassOf<UInventoryEntryButton> EntryClass = NULL;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Panel Setup", meta = (EditCondition = "PanelLayout != EPanelLayout::GRID")) uint8 EntryCount = 5;
 
