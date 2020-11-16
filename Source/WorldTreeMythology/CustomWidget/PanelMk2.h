@@ -6,7 +6,6 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/PanelWidget.h"
 #include "WidgetMk2.h"
-#include "Slate/SPanelMk2.h"
 #include "PanelMk2.generated.h"
 
 UENUM(BlueprintType)
@@ -26,8 +25,6 @@ class WORLDTREEMYTHOLOGY_API UPanelMk2 : public UWidgetMk2
 	GENERATED_BODY()
 
 protected:
-	TSharedPtr<SPanelMk2> PanelSlate;
-
 	// This is the C++ handled PanelWidget
 	UPROPERTY(meta = (BindWidget)) UPanelWidget* MainPanel;
 

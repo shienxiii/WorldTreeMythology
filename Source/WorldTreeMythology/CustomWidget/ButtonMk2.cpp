@@ -21,6 +21,8 @@ void UButtonMk2::NativeOnInitialized()
     FocusedStyle.SetNormal(FocusedStyle.Hovered);
     DisabledStyle.SetNormal(DisabledStyle.Disabled);
 
+    Normal = MainButton->WidgetStyle.Normal;
+    Focused = MainButton->WidgetStyle.Hovered;
 
     CurrentStyle = &DefaultStyle;
 
@@ -58,6 +60,9 @@ void UButtonMk2::SetTextureParameter(FName ParamName, UTexture* InTexture)
     NormalMatDynamic->SetTextureParameterValue(ParamName, InTexture);
     FocusedMatDynamic->SetTextureParameterValue(ParamName, InTexture);
     ClickMatDynamic->SetTextureParameterValue(ParamName, InTexture);
+
+    Normal.SetResourceObject(NormalMatDynamic);
+    Focused.SetResourceObject(FocusedMatDynamic);
 
     DefaultStyle.Normal.SetResourceObject(NormalMatDynamic);
     DefaultStyle.Hovered.SetResourceObject(NormalMatDynamic);

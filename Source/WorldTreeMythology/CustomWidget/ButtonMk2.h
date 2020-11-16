@@ -34,6 +34,9 @@ protected:
 	// Pointer to the current style assigned to MainButton
 	FButtonStyle* CurrentStyle;
 
+	FSlateBrush Normal;
+	FSlateBrush Focused;
+
 	UMaterialInstanceDynamic* NormalMatDynamic;
 	UMaterialInstanceDynamic* FocusedMatDynamic;
 	UMaterialInstanceDynamic* ClickMatDynamic;
