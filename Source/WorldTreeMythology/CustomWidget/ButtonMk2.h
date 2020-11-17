@@ -3,12 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/Button.h"
+#include "ButtonEX.h"
 #include "Blueprint/UserWidget.h"
 #include "WidgetMk2.h"
 #include "ButtonMk2.generated.h"
-
-
 
 /**
  * 
@@ -20,22 +18,7 @@ class WORLDTREEMYTHOLOGY_API UButtonMk2 : public UWidgetMk2
 	
 protected:
 	// This is the C++ managed Button
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget)) UButton* MainButton;
-
-	// This is the default button style set on the BP side
-	FButtonStyle DefaultStyle;
-
-	// This is the style to be swapped to when focused
-	FButtonStyle FocusedStyle;
-
-	// This is the style to be swapped to when disabled
-	FButtonStyle DisabledStyle;
-
-	// Pointer to the current style assigned to MainButton
-	FButtonStyle* CurrentStyle;
-
-	FSlateBrush Normal;
-	FSlateBrush Focused;
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget)) UButtonEX* MainButton;
 
 	UMaterialInstanceDynamic* NormalMatDynamic;
 	UMaterialInstanceDynamic* FocusedMatDynamic;
@@ -49,9 +32,6 @@ public:
 	UButtonMk2(const FObjectInitializer& ObjectInitializer);
 
 	void NativeOnInitialized() override;
-
-	void NativeOnAddedToFocusPath(const FFocusEvent& InFocusEvent) override;
-	void NativeOnRemovedFromFocusPath(const FFocusEvent& InFocusEvent) override;
 
 	void SetTextureParameter(FName ParamName, UTexture* InTexture);
 	void SetIsEnabled(bool InIsEnabled);

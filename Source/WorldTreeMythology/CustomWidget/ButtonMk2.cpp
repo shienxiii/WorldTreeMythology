@@ -13,22 +13,9 @@ void UButtonMk2::NativeOnInitialized()
 {
     Super::NativeOnInitialized();
 
-    DefaultStyle = MainButton->WidgetStyle;
-    FocusedStyle = MainButton->WidgetStyle;
-    DisabledStyle = MainButton->WidgetStyle;
-
-    DefaultStyle.SetHovered(DefaultStyle.Normal);
-    FocusedStyle.SetNormal(FocusedStyle.Hovered);
-    DisabledStyle.SetNormal(DisabledStyle.Disabled);
-
-    Normal = MainButton->WidgetStyle.Normal;
-    Focused = MainButton->WidgetStyle.Hovered;
-
-    CurrentStyle = &DefaultStyle;
-
-    NormalMatDynamic = UMaterialInstanceDynamic::Create(Cast<UMaterialInstance>(DefaultStyle.Normal.GetResourceObject()), nullptr);
-    FocusedMatDynamic = UMaterialInstanceDynamic::Create(Cast<UMaterialInstance>(FocusedStyle.Normal.GetResourceObject()), nullptr);
-    ClickMatDynamic = UMaterialInstanceDynamic::Create(Cast<UMaterialInstance>(DefaultStyle.Pressed.GetResourceObject()), nullptr);
+    NormalMatDynamic = UMaterialInstanceDynamic::Create(Cast<UMaterialInstance>(MainButton->WidgetStyle.Normal.GetResourceObject()), nullptr);
+    FocusedMatDynamic = UMaterialInstanceDynamic::Create(Cast<UMaterialInstance>(MainButton->WidgetStyle.Hovered.GetResourceObject()), nullptr);
+    ClickMatDynamic = UMaterialInstanceDynamic::Create(Cast<UMaterialInstance>(MainButton->WidgetStyle.Pressed.GetResourceObject()), nullptr);
     
     if (MainButton)
     {
@@ -39,40 +26,15 @@ void UButtonMk2::NativeOnInitialized()
     }
 }
 
-void UButtonMk2::NativeOnAddedToFocusPath(const FFocusEvent& InFocusEvent)
-{
-    Super::NativeOnAddedToFocusPath(InFocusEvent);
-
-    MainButton->SetStyle(FocusedStyle);
-    CurrentStyle = &FocusedStyle;
-}
-
-void UButtonMk2::NativeOnRemovedFromFocusPath(const FFocusEvent& InFocusEvent)
-{
-    Super::NativeOnRemovedFromFocusPath(InFocusEvent);
-
-    MainButton->SetStyle(DefaultStyle);
-    CurrentStyle = &DefaultStyle;
-}
-
 void UButtonMk2::SetTextureParameter(FName ParamName, UTexture* InTexture)
 {
     NormalMatDynamic->SetTextureParameterValue(ParamName, InTexture);
     FocusedMatDynamic->SetTextureParameterValue(ParamName, InTexture);
     ClickMatDynamic->SetTextureParameterValue(ParamName, InTexture);
 
-    Normal.SetResourceObject(NormalMatDynamic);
-    Focused.SetResourceObject(FocusedMatDynamic);
-
-    DefaultStyle.Normal.SetResourceObject(NormalMatDynamic);
-    DefaultStyle.Hovered.SetResourceObject(NormalMatDynamic);
-    DefaultStyle.Pressed.SetResourceObject(ClickMatDynamic);
-    
-    FocusedStyle.Normal.SetResourceObject(FocusedMatDynamic);
-    FocusedStyle.Hovered.SetResourceObject(FocusedMatDynamic);
-    FocusedStyle.Pressed.SetResourceObject(ClickMatDynamic);
-
-    MainButton->SetStyle(*CurrentStyle);
+    MainButton->WidgetStyle.Normal.SetResourceObject(NormalMatDynamic);
+    MainButton->WidgetStyle.Hovered.SetResourceObject(FocusedMatDynamic);
+    MainButton->WidgetStyle.Pressed.SetResourceObject(ClickMatDynamic);
 }
 
 void UButtonMk2::SetIsEnabled(bool InIsEnabled)
@@ -86,15 +48,11 @@ void UButtonMk2::SetIsEnabled(bool InIsEnabled)
 void UButtonMk2::DisableButton()
 {
     MainButton->SetIsEnabled(false);
-    MainButton->SetStyle(DisabledStyle);
-    CurrentStyle = &DisabledStyle;
 }
 
 void UButtonMk2::EnableButton()
 {
     MainButton->SetIsEnabled(true);
-    MainButton->SetStyle(DefaultStyle);
-    CurrentStyle = &DefaultStyle;
 }
 
 FReply UButtonMk2::NativeOnFocusReceived(const FGeometry& InGeometry, const FFocusEvent& InFocusEvent)
