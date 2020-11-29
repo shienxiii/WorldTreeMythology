@@ -35,7 +35,7 @@ void UInventoryComponent::SetIsStorage(bool InIsStorage)
 	}
 }
 
-bool UInventoryComponent::AddSubclassToInventory(TSubclassOf<AInventory> InInventory, int32 InCount)
+bool UInventoryComponent::AddBySubclass(TSubclassOf<AInventory> InInventory, int32 InCount)
 {
 	UInventoryList* list = GetInventoryListFor(InInventory);
 
@@ -46,7 +46,7 @@ bool UInventoryComponent::AddSubclassToInventory(TSubclassOf<AInventory> InInven
 	return true;
 }
 
-UInventoryEntry* UInventoryComponent::AddActorToInventory(AInventory* InInventory)
+UInventoryEntry* UInventoryComponent::AddByActor(AInventory* InInventory)
 {
 	UInventoryList* list = GetInventoryListFor(InInventory->GetClass());
 
@@ -54,7 +54,7 @@ UInventoryEntry* UInventoryComponent::AddActorToInventory(AInventory* InInventor
 
 	if (!list->IsUniqueEntriesList())
 	{
-		AddSubclassToInventory(InInventory->StaticClass(), 1);
+		AddBySubclass(InInventory->StaticClass(), 1);
 		return nullptr;
 	}
 

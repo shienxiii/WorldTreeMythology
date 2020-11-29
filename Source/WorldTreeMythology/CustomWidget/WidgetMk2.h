@@ -12,7 +12,7 @@ DECLARE_DELEGATE_OneParam(FWidgetFocused, UWidget*)
 /**
  * 
  */
-UCLASS(Abstract, BlueprintType, Blueprintable)
+UCLASS(Abstract, NotBlueprintable)
 class WORLDTREEMYTHOLOGY_API UWidgetMk2 : public UUserWidget
 {
 	GENERATED_BODY()
@@ -23,7 +23,6 @@ protected:
 public:
 	bool BindOnWidgetFocused(UObject* InObject, FName InFuncName);
 	void NativeOnAddedToFocusPath(const FFocusEvent& InFocusEvent) override;
-	TSharedRef<SWidget> RebuildSlate() { return RebuildWidget(); }
 
 #if WITH_EDITOR
 	const FText GetPaletteCategory() override { return FText::FromString("UMG Mk2"); }

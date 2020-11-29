@@ -49,11 +49,6 @@ void SButtonEX::Construct(const FArguments& InArgs)
 		]
 	);
 
-	// Only do this if we're exactly an SButton
-	/*if (GetType() == SButtonTypeName)
-	{
-		SetCanTick(false);
-	}*/
 	SetCanTick(false);
 
 	ContentPadding = InArgs._ContentPadding;
@@ -79,11 +74,24 @@ void SButtonEX::Construct(const FArguments& InArgs)
 FReply SButtonEX::OnFocusReceived(const FGeometry& MyGeometry, const FFocusEvent& InFocusEvent)
 {
 	bIsFocused = true;
+
+	if (bIsHovered) { return FReply::Handled(); }
+
+	if (IsEnabled())
+	{
+		PlayHoverSound();
+	}
+
+	OnHovered.ExecuteIfBound();
+
 	return FReply::Handled();
 }
 
 void SButtonEX::OnFocusLost(const FFocusEvent& InFocusEvent)
 {
 	bIsFocused = false;
+
+	//bool bWasHovered = bIsHovered;
+
 	SButton::OnFocusLost(InFocusEvent);
 }

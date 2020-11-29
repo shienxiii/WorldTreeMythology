@@ -3,13 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ButtonEX.h"
-#include "Blueprint/UserWidget.h"
+#include "../WidgetEX/ButtonEX.h"
 #include "WidgetMk2.h"
+#include "Blueprint/UserWidget.h"
 #include "ButtonMk2.generated.h"
 
 /**
- * 
+ * This is UserWidget class that allows user to design a button appearance and reuse it in another UserWidget object
  */
 UCLASS(Abstract, BlueprintType, Blueprintable)
 class WORLDTREEMYTHOLOGY_API UButtonMk2 : public UWidgetMk2
@@ -35,8 +35,6 @@ public:
 
 	void SetTextureParameter(FName ParamName, UTexture* InTexture);
 	void SetIsEnabled(bool InIsEnabled);
-	void DisableButton();
-	void EnableButton();
 
 
 	FReply NativeOnFocusReceived(const FGeometry& InGeometry, const FFocusEvent& InFocusEvent) override;

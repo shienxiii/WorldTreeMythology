@@ -5,6 +5,12 @@
 #include "Components/ButtonSlot.h"
 #include "Slate/SButtonEX.h"
 
+UButtonEX::UButtonEX(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+{
+	// Disable this if you do not want hover to set user focus on this button
+	OnHovered.AddDynamic(this, &UButtonEX::SetFocus);
+}
+
 TSharedRef<SWidget> UButtonEX::RebuildWidget()
 {
 	MyButton = SNew(SButtonEX)

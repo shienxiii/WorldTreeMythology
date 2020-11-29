@@ -19,7 +19,7 @@ enum class EPanelLayout : uint8
 /**
  * 
  */
-UCLASS(Abstract, BlueprintType, Blueprintable)
+UCLASS(Abstract, BlueprintType, NotBlueprintable)
 class WORLDTREEMYTHOLOGY_API UPanelMk2 : public UWidgetMk2
 {
 	GENERATED_BODY()
@@ -33,12 +33,6 @@ protected:
 
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Panel Setup") EPanelLayout PanelLayout = EPanelLayout::VERTICAL;
-
-	// Maximum number of child per row
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Panel Setup", meta = (EditCondition = "PanelLayout == EPanelLayout::GRID")) uint8 GridX = 5;
-
-	// Maximum number of child per column
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Panel Setup", meta = (EditCondition = "PanelLayout == EPanelLayout::GRID")) uint8 GridY = 4;
 
 	FCustomWidgetNavigationDelegate NavigateNext;
 	FCustomWidgetNavigationDelegate NavigatePrev;
@@ -78,7 +72,7 @@ public:
 	FReply NativeOnFocusReceived(const FGeometry& InGeometry, const FFocusEvent& InFocusEvent);
 	UFUNCTION() UWidget* GetFocusedChild() { return FocusedChild; }
 	UFUNCTION() virtual void SetFocusedChild(UWidget* InWidget) { FocusedChild = InWidget; }
-	void ForgetLastFocusedChild() { FocusedChild = nullptr; }
+	UFUNCTION(BlueprintCallable) virtual void ForgetLastFocusedChild() { FocusedChild = nullptr; }
 
 
 	UFUNCTION() virtual UWidget* NavigateWidget(EUINavigation InNavigation);

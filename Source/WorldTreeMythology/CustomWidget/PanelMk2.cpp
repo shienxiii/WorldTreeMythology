@@ -59,13 +59,13 @@ UWidget* UPanelMk2::AddChildToPanel(TSubclassOf<UWidget> InChildClass)
 	
 	if (UGridPanel* grid = Cast<UGridPanel>(MainPanel))
 	{
-		// Get x position
-		int x = i % GridX;
+		//// Get x position
+		//int x = i % GridX;
 
-		// Get y position
-		int y = i / GridX;
+		//// Get y position
+		//int y = i / GridX;
 
-		grid->AddChildToGrid(newChild, y, x);
+		//grid->AddChildToGrid(newChild, y, x);
 	}
 	else
 	{
@@ -104,14 +104,22 @@ bool UPanelMk2::IsValidIndex(int32 InIndex)
 
 bool UPanelMk2::OnValidRow(int32 InIndex)
 {
-	int rowStart = (InIndex / GridX) * GridX;
-	return IsValidIndex(rowStart);
+	/*int rowStart = (InIndex / GridX) * GridX;
+	return IsValidIndex(rowStart);*/
+	return false;
 }
 
 FReply UPanelMk2::NativeOnFocusReceived(const FGeometry& InGeometry, const FFocusEvent& InFocusEvent)
 {
-	if (FocusedChild) { FocusedChild->SetFocus(); }
-	else if (MainPanel->GetChildrenCount() > 0) { MainPanel->GetChildAt(0)->SetFocus(); }
+	UE_LOG(LogTemp, Warning, TEXT("Focus Received on %s"), *(GetClass()->GetFName().ToString()));
+
+	if (FocusedChild)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *(FocusedChild->GetClass()->GetFName().ToString()));
+		//FocusedChild->SetFocus();
+		MainPanel->GetChildAt(GetChildIndex(FocusedChild))->SetFocus();
+	}
+	else if(MainPanel->GetChildrenCount() > 0) { MainPanel->GetChildAt(0)->SetFocus(); }
 
 	return Super::NativeOnFocusReceived(InGeometry, InFocusEvent);
 }
@@ -139,63 +147,41 @@ UWidget* UPanelMk2::NavigateWidget(EUINavigation InNavigation)
 UWidget* UPanelMk2::NavigateGridPanel(EUINavigation InNavigation)
 {
 	int32 index = GetChildIndex(FocusedChild);
-	if (index == INDEX_NONE) { return nullptr; }
+	//if (index == INDEX_NONE) { return nullptr; }
 
 
-	// circular navigation for now
-	switch (InNavigation)
-	{
-	case EUINavigation::Left:
-		do { index -= (index % GridX) == 0 ? -(GridX - 1) : 1; } while (!IsValidIndex(index));
-		break;
-	case EUINavigation::Right:
-		do { index += (index % GridX) == (GridX - 1) ? -(GridX - 1) : 1; } while (!IsValidIndex(index));
-		break;
-	case EUINavigation::Up:
-		do
-		{
-			index -= GridX;
-			index = index > -1 ? index : (GridX * GridY) + index;
-		} while (!OnValidRow(index));
+	//// circular navigation for now
+	//switch (InNavigation)
+	//{
+	//case EUINavigation::Left:
+	//	do { index -= (index % GridX) == 0 ? -(GridX - 1) : 1; } while (!IsValidIndex(index));
+	//	break;
+	//case EUINavigation::Right:
+	//	do { index += (index % GridX) == (GridX - 1) ? -(GridX - 1) : 1; } while (!IsValidIndex(index));
+	//	break;
+	//case EUINavigation::Up:
+	//	do
+	//	{
+	//		index -= GridX;
+	//		index = index > -1 ? index : (GridX * GridY) + index;
+	//	} while (!OnValidRow(index));
 
-		while (!IsValidIndex(index)) { index -= (index % GridX) == 0 ? -(GridX - 1) : 1; }
+	//	while (!IsValidIndex(index)) { index -= (index % GridX) == 0 ? -(GridX - 1) : 1; }
 
-		break;
-	case EUINavigation::Down:
-		do
-		{
-			index += GridX;
-			index %= (GridX * GridY);
-		} while (!OnValidRow(index));
+	//	break;
+	//case EUINavigation::Down:
+	//	do
+	//	{
+	//		index += GridX;
+	//		index %= (GridX * GridY);
+	//	} while (!OnValidRow(index));
 
-		while (!IsValidIndex(index)) { index -= (index % GridX) == 0 ? -(GridX - 1) : 1; }
+	//	while (!IsValidIndex(index)) { index -= (index % GridX) == 0 ? -(GridX - 1) : 1; }
 
-		break;
-	}
+	//	break;
+	//}
 
 	return MainPanel->GetChildAt(index);
 }
 
 
-//TSharedRef<SWidget> UPanelMk2::RebuildWidget()
-//{
-//	TSubclassOf<UUserWidget> widget = ButtonBP->GeneratedClass;
-//	if (widget) { UE_LOG(LogTemp, Warning, TEXT("widget")); }
-//	else { UE_LOG(LogTemp, Warning, TEXT("null widget")); }
-//
-//	UUserWidget* createdWidget = CreateWidget<UUserWidget>(GetWorld(), widget);
-//	TSharedPtr<SWidget> button;
-//	if (createdWidget)
-//	{
-//		button = createdWidget->TakeWidget();
-//	}
-//
-//	if (button) { UE_LOG(LogTemp, Warning, TEXT("valid cached widget")); }
-//	else { UE_LOG(LogTemp, Warning, TEXT("invalid cached widget")); }
-//
-//	PanelSlate = SNew(SPanelMk2)
-//		.OwningPlayer(nullptr)
-//		.Button(button)
-//		;
-//	return PanelSlate.ToSharedRef();
-//}

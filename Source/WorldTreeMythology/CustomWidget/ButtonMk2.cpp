@@ -19,8 +19,6 @@ void UButtonMk2::NativeOnInitialized()
     
     if (MainButton)
     {
-        MainButton->OnHovered.AddDynamic(MainButton, &UButton::SetFocus);
-
         MainButton->OnHovered.AddDynamic(this, &UButtonMk2::NativeHoverEvent);
         MainButton->OnClicked.AddDynamic(this, &UButtonMk2::NativeClickEvent);
     }
@@ -41,24 +39,12 @@ void UButtonMk2::SetIsEnabled(bool InIsEnabled)
 {
     bIsEnabled = InIsEnabled;
 
-    if (InIsEnabled) { EnableButton(); }
-    else { DisableButton(); }
-}
-
-void UButtonMk2::DisableButton()
-{
-    MainButton->SetIsEnabled(false);
-}
-
-void UButtonMk2::EnableButton()
-{
-    MainButton->SetIsEnabled(true);
+    MainButton->SetIsEnabled(InIsEnabled);
 }
 
 FReply UButtonMk2::NativeOnFocusReceived(const FGeometry& InGeometry, const FFocusEvent& InFocusEvent)
 {
     MainButton->SetFocus();
-    MainButton->OnHovered.Broadcast();
     return Super::NativeOnFocusReceived(InGeometry, InFocusEvent);
 }
 

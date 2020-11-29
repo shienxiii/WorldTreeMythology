@@ -32,11 +32,11 @@ public:
 	
 	/**
 	 * Add Inventory to it's respective list. Added Inventory will be in their default base form.
-	 * Use AddActorToInventory() instead, which will return the InventoryEntry created to add unique traits
+	 * If adding with unique trait, use AddByActor() instead, which will return the InventoryEntry created to add unique traits
 	 * 
 	 * @return true if successfully added to Inventory
 	 */
-	UFUNCTION(BlueprintCallable) bool AddSubclassToInventory(TSubclassOf<AInventory> InInventory, int32 InCount = 1);
+	UFUNCTION(BlueprintCallable) bool AddBySubclass(TSubclassOf<AInventory> InInventory, int32 InCount = 1);
 
 	//UFUNCTION(BlueprintCallable) bool AddInventoryByEntry(UInventoryEntry* InInventoryEntry);
 
@@ -44,11 +44,11 @@ public:
 	 * Adds a single unique entry for the passed Inventory class and returns a reference to the entry.
 	 * This is used for when picking up Inventory actors from the game world.
 	 * 
-	 * If the InventoryList for storing the Inventory class, then automatically call AddSubclassToInventory().
+	 * If the InventoryList for storing the Inventory class, then automatically call AddBySubclass().
 	 *
 	 * @return Reference to the InventoryEntry class created
 	 */
-	UFUNCTION(BlueprintCallable) UInventoryEntry* AddActorToInventory(AInventory* InInventory);
+	UFUNCTION(BlueprintCallable) UInventoryEntry* AddByActor(AInventory* InInventory);
 
 #pragma region InventoryList
 	UFUNCTION(BlueprintCallable) TArray<UInventoryEntry*> QueryForSubclass(TSubclassOf<AInventory> InSubclass);

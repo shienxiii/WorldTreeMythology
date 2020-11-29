@@ -42,11 +42,14 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable) void MofifyListSize(int32 InCount);
 
+	// Create a new empty Entry
 	UInventoryEntry* CreateNewEntry();
 
 	/**
 	 * Adds InCount number of the passed Inventory class and returns the assigned InventoryEntry if successful.
 	 * Inventory objects are added in their default state. To store unique traits of each Inventory object, use AddUnique()
+	 * 
+	 * @return Reference to the entry of the added inventory
 	 */
 	UFUNCTION(BlueprintCallable) UInventoryEntry* Add(TSubclassOf<AInventory> InClass, int32 InCount = 1);
 
@@ -55,6 +58,8 @@ public:
 	 * 
 	 * NOTE TO SELF: make BlueprintNativeEvent
 	 * bUniqueEntries must be true
+	 * 
+	 * @return Reference to the entry of the added inventory
 	 */
 	UFUNCTION(BlueprintCallable) UInventoryEntry* AddUnique(TSubclassOf<AInventory> InClass);
 

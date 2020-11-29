@@ -32,9 +32,9 @@ public:
 		, _IsFocusable(true)
 	{
 	}
-
-	/** Slot for this button's content (optional) */
-	SLATE_DEFAULT_SLOT(FArguments, Content)
+#pragma region SButton
+		/** Slot for this button's content (optional) */
+		SLATE_DEFAULT_SLOT(FArguments, Content)
 
 		/** The visual style of the button */
 		SLATE_STYLE_ARGUMENT(FButtonStyle, ButtonStyle)
@@ -98,8 +98,11 @@ public:
 
 		/** Which text flow direction should we use? (unset to use the default returned by GetDefaultTextFlowDirection) */
 		SLATE_ARGUMENT(TOptional<ETextFlowDirection>, TextFlowDirection)
+#pragma endregion
 
-		SLATE_END_ARGS()
+		//SLATE_EVENT(FSimpleDelegate, OnFocused)
+
+	SLATE_END_ARGS()
 #pragma endregion
 
 
