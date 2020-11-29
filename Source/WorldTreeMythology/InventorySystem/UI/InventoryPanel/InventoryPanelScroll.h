@@ -13,7 +13,7 @@
  * This is to allow the user to have more control on the appearance of the ScrollBox.
  */
 UCLASS(Blueprintable)
-class WORLDTREEMYTHOLOGY_API UInventoryPanelScroll : public UInventoryPanel
+class WORLDTREEMYTHOLOGY_API UInventoryPanelScroll : public UInventoryPanelBase
 {
 	GENERATED_BODY()
 	
@@ -24,10 +24,11 @@ protected:
 protected:
 	void NativePreConstruct() override;
 
-	void SetupNavigation(UWidget* InWidget) override;
+	void SetupNavigation(UWidget* InWidget);
 
 public:
-	void RefreshPanel(TArray<UInventoryEntry*> InQuery);
-	UFUNCTION(BlueprintCallable) void ResizePanel(int32 InEntryCount);
+	void RefreshPanel(TArray<UInventoryEntry*> InQuery) override;
+	void ResizePanel(int32 InEntryCount);
 
+	void SetFocusedWidget(UInventoryWidget* InEntry) override;
 };

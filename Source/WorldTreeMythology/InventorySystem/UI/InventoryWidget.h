@@ -44,4 +44,8 @@ public:
 	bool BindNativeOnEntryClicked(UObject* InObject, FName InFuncName);
 
 	void NativeOnAddedToFocusPath(const FFocusEvent& InFocusEvent) override;
+
+#if WITH_EDITOR
+	const FText GetPaletteCategory() override { return FText::FromString("Inventory UI"); }
+#endif
 };

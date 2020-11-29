@@ -9,10 +9,10 @@
 #include "InventoryPanel.generated.h"
 
 /**
- * This class acts as the top-level of the Inventory UI and contains functions that allows communication between the UI system and the InventoryComponent.
+ * 
  */
 UCLASS(Abstract, NotBlueprintable)
-class WORLDTREEMYTHOLOGY_API UInventoryPanel : public UUserWidget
+class WORLDTREEMYTHOLOGY_API UInventoryPanelBase : public UUserWidget
 {
 	GENERATED_BODY()
 	
@@ -29,25 +29,37 @@ protected:
 	TArray<UInventoryWidget*> Entries;
 	UInventoryWidget* FocusedEntry = nullptr;
 
-	// Delegate to be assigned to InventoryEntryButton upon creation
 	FCustomWidgetNavigationDelegate NavigationDelegate;
 
 public:
-	UInventoryPanel(const FObjectInitializer& ObjectInitializer);
+	FInventoryEntryBPEvent OnEntryHovered;
+	FInventoryEntryBPEvent OnEntryClicked;
+
+
+public:
+	UInventoryPanelBase(const FObjectInitializer& ObjectInitializer);
+	void SetInventoryComponent(UInventoryComponent* InInventoryComponent) { InventoryComponent = InInventoryComponent; }
 
 	UInventoryWidget* AddNewWidget();
-
 	int32 GetRequiredEntryCount(int32 InQueryCount);
 	int32 GetEntryIndex(UInventoryWidget* InWidget);
 
+#pragma region Query
+	// Query for the content of the InventoryList that can hold InInventoryClass, including empty entries
+	UFUNCTION(BlueprintCallable) void QueryForList(TSubclassOf<AInventory> InInventoryClass);
 
-	UFUNCTION(BlueprintCallable) void SetInventoryComponent(UInventoryComponent* InInventoryComponent = nullptr) { InventoryComponent = InInventoryComponent; }
+	virtual void RefreshPanel(TArray<UInventoryEntry*> InQuery) {}
+#pragma endregion
 
-	UFUNCTION() virtual UWidget* NavigatePanel(EUINavigation InNavigation);
 	UFUNCTION() void NativeEntryHoverEvent(UInventoryEntry* InEntry);
 	UFUNCTION() void NativeEntryClickEvent(UInventoryEntry* InEntry);
-	UFUNCTION() void SetFocusedWidget(UInventoryWidget* InEntry) { FocusedEntry = Cast<UInventoryWidget>(InEntry); }
+	UFUNCTION(BlueprintImplementableEvent) void EntryHoverEvent(UInventoryEntry* InEntry);
+	UFUNCTION(BlueprintImplementableEvent) void EntryClickEvent(UInventoryEntry* InEntry);
+	UFUNCTION() virtual void SetFocusedWidget(UInventoryWidget* InEntry) { FocusedEntry = Cast<UInventoryWidget>(InEntry); }
+	UFUNCTION() virtual UWidget* NavigatePanel(EUINavigation InNavigation);
 
-protected:
-	virtual void SetupNavigation(UWidget* InWidget) { check(false); }
+	FReply NativeOnFocusReceived(const FGeometry& InGeometry, const FFocusEvent& InFocusEvent) override;
+#if WITH_EDITOR
+	const FText GetPaletteCategory() override { return FText::FromString("Inventory UI"); }
+#endif
 };

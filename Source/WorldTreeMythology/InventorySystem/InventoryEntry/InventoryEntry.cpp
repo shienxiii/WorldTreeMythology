@@ -16,7 +16,7 @@ bool UInventoryEntry::InitializeEntry_Implementation(TSubclassOf<AInventory> InC
 
 int32 UInventoryEntry::Add(int32 InCount)
 {
-    // Find if there are excess to coming in
+    // Find if there will be excess object after adding
     int32 excess = InCount > GetRemainingCount() ? InCount - GetRemainingCount() : 0;
 
     Count += (InCount - excess);

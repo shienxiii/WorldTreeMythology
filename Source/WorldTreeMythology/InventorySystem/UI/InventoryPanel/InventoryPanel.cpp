@@ -2,43 +2,44 @@
 
 
 #include "InventoryPanel.h"
+#include "Blueprint/WidgetTree.h"
 
-UInventoryPanel::UInventoryPanel(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+UInventoryPanelBase::UInventoryPanelBase(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
-	bIsFocusable = true;
-	NavigationDelegate.BindUFunction(this, TEXT("NavigatePanel"));
+    bIsFocusable = true;
+    NavigationDelegate.BindUFunction(this, TEXT("NavigatePanel"));
 }
 
-UInventoryWidget* UInventoryPanel::AddNewWidget()
+UInventoryWidget* UInventoryPanelBase::AddNewWidget()
 {
 	if (!InventoryWidgetClass) { return nullptr; }
 
 	int i = Entries.Add(CreateWidget<UInventoryWidget>(GetWorld(), InventoryWidgetClass));
+	//WidgetTree->ConstructWidget<UWidget>(InChildClass);
+	Entries[i]->SetIndex(i);
 
 	// Bind Callback Event
 	Entries[i]->BindNativeOnEntryHovered(this, "NativeEntryHoverEvent");
 	Entries[i]->BindNativeOnEntryClicked(this, "NativeEntryClickEvent");
 	Entries[i]->BindOnAddedToFocus(this, "SetFocusedWidget");
 
-	//SetupNavigation(Entries[i]);
-
 	return Entries[i];
 }
 
-int32 UInventoryPanel::GetRequiredEntryCount(int32 InQueryCount)
+int32 UInventoryPanelBase::GetRequiredEntryCount(int32 InQueryCount)
 {
 	if (InventoryWidgetClass.Get()->IsChildOf<UInventoryButton>()) { return InQueryCount; }
 
 	UInventoryPage* page = Cast<UInventoryPage>(InventoryWidgetClass.GetDefaultObject());
 
-	int32 requiredChildrenCount = InQueryCount / page->GetEntryCount();
+	int32 requiredEntryCount = InQueryCount / page->GetEntryCount();
 
-	requiredChildrenCount += ((InQueryCount % page->GetEntryCount()) > 0) ? 1 : 0;
+	requiredEntryCount += ((InQueryCount % page->GetEntryCount()) > 0) ? 1 : 0;
 
-	return requiredChildrenCount;
+	return requiredEntryCount;
 }
 
-int32 UInventoryPanel::GetEntryIndex(UInventoryWidget* InWidget)
+int32 UInventoryPanelBase::GetEntryIndex(UInventoryWidget* InWidget)
 {
 	if (!InWidget) { return INDEX_NONE; }
 
@@ -50,10 +51,26 @@ int32 UInventoryPanel::GetEntryIndex(UInventoryWidget* InWidget)
 	return index;
 }
 
-UWidget* UInventoryPanel::NavigatePanel(EUINavigation InNavigation)
+void UInventoryPanelBase::QueryForList(TSubclassOf<AInventory> InInventoryClass)
 {
-	UE_LOG(LogTemp, Warning, TEXT("NavigatePanel"));
+	if (!InventoryComponent) { return; }
+	RefreshPanel(InventoryComponent->GetInventoryListFor(InInventoryClass)->QueryForAll());
+}
 
+void UInventoryPanelBase::NativeEntryHoverEvent(UInventoryEntry* InEntry)
+{
+	EntryHoverEvent(InEntry);
+	OnEntryHovered.Broadcast(InEntry);
+}
+
+void UInventoryPanelBase::NativeEntryClickEvent(UInventoryEntry* InEntry)
+{
+	EntryClickEvent(InEntry);
+	OnEntryClicked.Broadcast(InEntry);
+}
+
+UWidget* UInventoryPanelBase::NavigatePanel(EUINavigation InNavigation)
+{
 	int32 prevIndex = GetEntryIndex(FocusedEntry);
 	int32 nextIndex = prevIndex;
 
@@ -71,9 +88,8 @@ UWidget* UInventoryPanel::NavigatePanel(EUINavigation InNavigation)
 		nextIndex = nextIndex > -1 ? nextIndex : Entries.Num() - 1;
 	}
 
-	if (InventoryWidgetClass.Get()->IsChildOf<UInventoryButton>()) { UE_LOG(LogTemp, Warning, TEXT("Processing Button")); return Entries[nextIndex]; }
+	if (InventoryWidgetClass.Get()->IsChildOf<UInventoryButton>()) { return Entries[nextIndex]; }
 
-	UE_LOG(LogTemp, Warning, TEXT("Processing Pages"));
 	// Offset focused child
 	UInventoryPage* prevPage = Cast<UInventoryPage>(Entries[prevIndex]);
 	UInventoryPage* nextPage = Cast<UInventoryPage>(Entries[nextIndex]);
@@ -83,10 +99,12 @@ UWidget* UInventoryPanel::NavigatePanel(EUINavigation InNavigation)
 	return nextPage->GetEntryAt(i);
 }
 
-void UInventoryPanel::NativeEntryHoverEvent(UInventoryEntry* InEntry)
+FReply UInventoryPanelBase::NativeOnFocusReceived(const FGeometry& InGeometry, const FFocusEvent& InFocusEvent)
 {
-}
+	if (Entries.Num() == 0) { return FReply::Unhandled(); }
 
-void UInventoryPanel::NativeEntryClickEvent(UInventoryEntry* InEntry)
-{
+	if (FocusedEntry) { FocusedEntry->SetFocus(); }
+	else { Entries[0]->SetFocus(); }
+
+	return FReply::Handled();
 }

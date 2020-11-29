@@ -54,7 +54,11 @@ public:
 	UFUNCTION(BlueprintCallable) TArray<UInventoryEntry*> QueryForSubclass(TSubclassOf<AInventory> InSubclass);
 	UFUNCTION(BlueprintCallable) TArray<UInventoryEntry*> CustomQuery(TSubclassOf<AInventory> InInventoryClass, uint8 InQueryEnum);
 
+	/**
+	 * Gets the InventoryList that can store the InventoryClass parameter
+	 */
 	UFUNCTION(BlueprintCallable) UInventoryList* GetInventoryListFor(TSubclassOf<AInventory> InInventoryClass);
+
 	/**
 	 * Gets the index of the InventoryList that can store Inventory of class InInventoryClass
 	 * 

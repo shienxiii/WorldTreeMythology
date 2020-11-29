@@ -66,11 +66,12 @@ public:
 	// Checks if bUniqueEntries is true
 	UFUNCTION(BlueprintCallable) bool IsUniqueEntriesList() { return bUniqueEntries; }
 
-	// Returns every single InventoryEntry stored on this list, including the empty ones
+	// Returns every InventoryEntry stored on this list, including the empty ones
 	TArray<UInventoryEntry*> QueryForAll() { return Inventory; }
 
 	/**
 	 * Queries the list for Inventory that are derived from a subclass, which is derived from BaseClass
+	 * Does not return empty entries.
 	 * 
 	 * @param InSubclass Subclass of the Inventory to return, must be derived from BaseClass
 	 */

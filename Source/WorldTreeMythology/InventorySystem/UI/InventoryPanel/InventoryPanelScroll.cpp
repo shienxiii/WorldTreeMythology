@@ -6,12 +6,13 @@
 void UInventoryPanelScroll::NativePreConstruct()
 {
 	Super::NativePreConstruct();
+
+	if (!InventoryWidgetClass || !Panel) { return; }
 	ResizePanel(MinEntryCount);
 }
 
 void UInventoryPanelScroll::SetupNavigation(UWidget* InWidget)
 {
-	UE_LOG(LogTemp, Warning, TEXT("SetupNavigation"));
     if (Panel->Orientation == EOrientation::Orient_Vertical)
     {
         InWidget->SetNavigationRuleCustom(EUINavigation::Up, NavigationDelegate);
@@ -42,7 +43,7 @@ void UInventoryPanelScroll::ResizePanel(int32 InEntryCount)
 		}
 	}
 	else if (InEntryCount > Panel->GetChildrenCount())
-	{
+	{;
 		//  MainPanel is undersized
 		while (InEntryCount > Panel->GetChildrenCount())
 		{
@@ -51,4 +52,14 @@ void UInventoryPanelScroll::ResizePanel(int32 InEntryCount)
 			SetupNavigation(widget);
 		}
 	}
+}
+
+void UInventoryPanelScroll::SetFocusedWidget(UInventoryWidget* InEntry)
+{
+	Super::SetFocusedWidget(InEntry);
+
+	Panel->ScrollWidgetIntoView(InEntry,
+		Panel->bAnimateWheelScrolling,
+		Panel->NavigationDestination,
+		Panel->NavigationScrollPadding);
 }

@@ -57,6 +57,7 @@ UInventoryButton* UInventoryPage::AddNewButton()
 	Entries[i]->BindNativeOnEntryHovered(this, "NativeEntryHoverEvent");
 	Entries[i]->BindNativeOnEntryClicked(this, "NativeEntryClickEvent");
 	Entries[i]->BindOnAddedToFocus(this, "SetFocusedEntry");
+	Entries[i]->SetIndex((GetEntryCount() * Index) + i);
 
 	return Entries[i];
 }

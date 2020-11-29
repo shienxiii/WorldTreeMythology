@@ -52,6 +52,7 @@ public:
 	// Gets the remaining increment that can be added to this InventoryEntry
 	UFUNCTION(BlueprintPure) int32 GetRemainingCount();
 
+	// Gets the maximum count of this InventoryEntry
 	UFUNCTION(BlueprintPure) int32 GetMaxCount();
 
 	/** 
