@@ -1,13 +1,28 @@
 // Copyright of Maple Game Studio
 
 
-#include "InventoryPanel.h"
+#include "InventoryPanelBase.h"
 #include "Blueprint/WidgetTree.h"
 
 UInventoryPanelBase::UInventoryPanelBase(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
     bIsFocusable = true;
     NavigationDelegate.BindUFunction(this, TEXT("NavigatePanel"));
+}
+
+void UInventoryPanelBase::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
+
+	bIsInitialized = true;
+}
+
+void UInventoryPanelBase::NativeDestruct()
+{
+	Super::NativeDestruct();
+	ClearFocusedWidget();
+	Entries.Empty();
+	UE_LOG(LogTemp, Warning, TEXT("%s destruct"), *(GetFName().ToString()));
 }
 
 UInventoryWidget* UInventoryPanelBase::AddNewWidget()
@@ -71,6 +86,8 @@ void UInventoryPanelBase::NativeEntryClickEvent(UInventoryEntry* InEntry)
 
 UWidget* UInventoryPanelBase::NavigatePanel(EUINavigation InNavigation)
 {
+	//if (!FocusedEntry) { return nullptr; }
+
 	int32 prevIndex = GetEntryIndex(FocusedEntry);
 	int32 nextIndex = prevIndex;
 
@@ -96,14 +113,51 @@ UWidget* UInventoryPanelBase::NavigatePanel(EUINavigation InNavigation)
 
 	int32 i = prevPage->GetEntryIndex(prevPage->GetFocusedEntry());
 
-	return nextPage->GetEntryAt(i);
+	if (i == INDEX_NONE) { return nullptr; }
+
+	// If next page's entry at i is valid and enabled, return the entry
+	if(!nextPage->GetEntryAt(i)->IsNullEntry()) 
+	{ 
+		return nextPage->GetEntryAt(i);
+	}
+
+	do
+	{
+		i--;
+	} while (i > 0 && nextPage->GetEntryAt(i)->IsNullEntry());
+
+
+	return !(nextPage->GetEntryAt(i)->IsNullEntry()) ? nextPage->GetEntryAt(i) : prevPage->GetFocusedEntry();
+}
+
+void UInventoryPanelBase::ClearFocusedWidget()
+{
+	FocusedEntry = nullptr;
+	UE_LOG(LogTemp, Warning, TEXT("Clearing Panel focus"));
+	if (InventoryWidgetClass.Get()->IsChildOf<UInventoryButton>()) { return; }
+
+	for (UInventoryWidget* entry : Entries)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Clearing Page focus"));
+		Cast<UInventoryPage>(entry)->ClearFocusedWidget();
+	}
 }
 
 FReply UInventoryPanelBase::NativeOnFocusReceived(const FGeometry& InGeometry, const FFocusEvent& InFocusEvent)
 {
 	if (Entries.Num() == 0) { return FReply::Unhandled(); }
 
-	if (FocusedEntry) { FocusedEntry->SetFocus(); }
+	if (FocusedEntry)
+	{
+		FString name = FocusedEntry->GetFName().ToString();
+		UE_LOG(LogTemp, Warning, TEXT("Focus on : %s"), *name);
+		if (FocusedEntry->bIsFocusable)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("focusable"));
+		}
+
+		FocusedEntry->SetFocus();
+	}
 	else { Entries[0]->SetFocus(); }
 
 	return FReply::Handled();

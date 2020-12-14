@@ -3,14 +3,53 @@
 
 #include "InventoryButton.h"
 
-void UInventoryButton::NativePreConstruct()
+void UInventoryButton::NativeOnInitialized()
 {
-    Super::NativePreConstruct();
+    Super::NativeOnInitialized();
 
     if (!EntryButton) { return; }
 
     EntryButton->OnHovered.AddDynamic(this, &UInventoryButton::EntryHoverEvent);
     EntryButton->OnClicked.AddDynamic(this, &UInventoryButton::EntryClickEvent);
+
+    NormalMatDynamic = UMaterialInstanceDynamic::Create(Cast<UMaterialInstance>(EntryButton->WidgetStyle.Normal.GetResourceObject()), nullptr);
+    HoverMatDynamic = UMaterialInstanceDynamic::Create(Cast<UMaterialInstance>(EntryButton->WidgetStyle.Hovered.GetResourceObject()), nullptr);
+    ClickMatDynamic = UMaterialInstanceDynamic::Create(Cast<UMaterialInstance>(EntryButton->WidgetStyle.Pressed.GetResourceObject()), nullptr);
+}
+
+void UInventoryButton::RefreshQuery(TArray<UInventoryEntry*> InEntry)
+{
+    if (Index >= InEntry.Num())
+    {
+        Entry = nullptr;
+
+        if (NullState == EEntryNullState::HIDE)
+        {
+            SetVisibility(ESlateVisibility::Hidden);
+        }
+        else
+        {
+            SetIsEnabled(false);
+            EntryButton->SetIsEnabled(false);
+        }
+
+        return;
+    }
+
+    Entry = InEntry[Index];
+
+    SetIsEnabled(true);
+    EntryButton->SetIsEnabled(true);
+
+    if (!Entry->GetInventoryDefault()) { return; }
+
+    NormalMatDynamic->SetTextureParameterValue(IconParameter, Entry->GetInventoryDefault()->GetIcon());
+    HoverMatDynamic->SetTextureParameterValue(IconParameter, Entry->GetInventoryDefault()->GetIcon());
+    ClickMatDynamic->SetTextureParameterValue(IconParameter, Entry->GetInventoryDefault()->GetIcon());
+
+    EntryButton->WidgetStyle.Normal.SetResourceObject(NormalMatDynamic);
+    EntryButton->WidgetStyle.Hovered.SetResourceObject(HoverMatDynamic);
+    EntryButton->WidgetStyle.Pressed.SetResourceObject(ClickMatDynamic);
 }
 
 FReply UInventoryButton::NativeOnFocusReceived(const FGeometry& InGeometry, const FFocusEvent& InFocusEvent)

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ScrollBox.h"
-#include "InventoryPanel.h"
+#include "InventoryPanelBase.h"
 #include "InventoryPanelScroll.generated.h"
 
 /**
@@ -22,7 +22,12 @@ protected:
 		UScrollBox* Panel;
 
 protected:
+	void NativeOnInitialized() override;
+	void NativeDestruct() override;
+
+	// NOTE: NativeOnInitialized is only called everytime the widget is drawn
 	void NativePreConstruct() override;
+
 
 	void SetupNavigation(UWidget* InWidget);
 

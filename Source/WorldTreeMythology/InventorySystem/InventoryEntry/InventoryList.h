@@ -47,17 +47,17 @@ public:
 
 	/**
 	 * Adds InCount number of the passed Inventory class and returns the assigned InventoryEntry if successful.
-	 * Inventory objects are added in their default state. To store unique traits of each Inventory object, use AddUnique()
+	 * Does not add anything to the list if bUniqueEntries is true. Use AddUnique() instead in this case.
 	 * 
 	 * @return Reference to the entry of the added inventory
 	 */
-	UFUNCTION(BlueprintCallable) UInventoryEntry* Add(TSubclassOf<AInventory> InClass, int32 InCount = 1);
+	UFUNCTION(BlueprintCallable) int32 Add(TSubclassOf<AInventory> InClass, int32 InCount = 1);
 
 	/**
 	 * Adds a single unique entry for the passed Inventory class and returns a pointer to the entry.
 	 * 
 	 * NOTE TO SELF: make BlueprintNativeEvent
-	 * bUniqueEntries must be true
+	 * Does not add anything to the list if bUniqueEntries is false. Use Add() instead in this case.
 	 * 
 	 * @return Reference to the entry of the added inventory
 	 */

@@ -27,4 +27,7 @@ protected:
 	void SetupNavigation() override;
 
 	virtual TSharedRef<SWidget> RebuildWidget() override;
+
+public:
+	void ReleaseSlateResources(bool bReleaseChildren) override;
 };

@@ -3,16 +3,28 @@
 
 #include "InventoryPage.h"
 
+
 UInventoryPage::UInventoryPage(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	NavigationDelegate.BindUFunction(this, TEXT("NavigatePanel"));
 }
 
-void UInventoryPage::NativePreConstruct()
+UInventoryPage::~UInventoryPage()
 {
-	Super::NativePreConstruct();
+	UE_LOG(LogTemp, Warning, TEXT("Page %s destructor"), *(GetFName().ToString()));
+}
+
+void UInventoryPage::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
 
 	SetupNavigation();
+}
+
+void UInventoryPage::NativeDestruct()
+{
+	Super::NativeDestruct();
+	UE_LOG(LogTemp, Warning, TEXT("%s destruct"), *(GetFName().ToString()));
 }
 
 void UInventoryPage::SetIndex(int32 InIndex)
@@ -25,6 +37,14 @@ void UInventoryPage::SetIndex(int32 InIndex)
 	for (int i = 0; i < Entries.Num(); i++)
 	{
 		Entries[i]->SetIndex(startIndex + i);
+	}
+}
+
+void UInventoryPage::RefreshQuery(TArray<UInventoryEntry*> InEntry)
+{
+	for (UInventoryButton* entry : Entries)
+	{
+		entry->RefreshQuery(InEntry);
 	}
 }
 
@@ -66,14 +86,22 @@ FReply UInventoryPage::NativeOnFocusReceived(const FGeometry& InGeometry, const 
 {
     if (Entries.Num() == 0) { return FReply::Unhandled(); }
 
-    if (FocusedEntry) { FocusedEntry->SetFocus(); }
-    else { Entries[0]->SetFocus(); }
+    if (FocusedEntry)
+	{
+		FocusedEntry->SetFocus();
+	}
+    else if(Entries[0]->bIsEnabled && Entries[0]->IsVisible())
+	{
+		Entries[0]->SetFocus();
+	}
 
     return FReply::Handled();
 }
 
 UWidget* UInventoryPage::NavigatePanel(EUINavigation InNavigation)
 {
+	if (!FocusedEntry) { return nullptr; }
+
 	int32 index = GetEntryIndex(FocusedEntry);
 	if (index == INDEX_NONE) { return nullptr; }
 
@@ -82,11 +110,16 @@ UWidget* UInventoryPage::NavigatePanel(EUINavigation InNavigation)
 	{
 		index++;
 		index %= Entries.Num();
+
+		if (Entries[index]->IsNullEntry()) { index = 0; }
 	}
 	else
 	{
-		index--;
-		index = index > -1 ? index : Entries.Num() - 1;
+		do
+		{
+			index--;
+			index = index > -1 ? index : Entries.Num() - 1;
+		} while (Entries[index]->IsNullEntry());
 	}
 
 	return Entries[index];

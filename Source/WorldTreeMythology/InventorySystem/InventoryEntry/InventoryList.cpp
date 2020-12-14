@@ -30,65 +30,49 @@ UInventoryEntry* UInventoryList::CreateNewEntry()
 	return Inventory[i];
 }
 
-UInventoryEntry* UInventoryList::Add(TSubclassOf<AInventory> InClass, int32 InCount)
+int32 UInventoryList::Add(TSubclassOf<AInventory> InClass, int32 InCount)
 {
-	// Test InClass eligibility
-	if (!CanStore(InClass)) { return nullptr; }
+	// Test InClass eligibility and whether this list can run this function
+	if (!CanStore(InClass) || bUniqueEntries) { return InCount; }
 
-	// If this list should hold unique entry, add using AddUnique() and return the last created entry
-	if (bUniqueEntries)
-	{
-		UInventoryEntry* entry = nullptr;
-
-		for (int i = 0; i < InCount; i++)
-		{
-			entry = AddUnique(InClass);
-		}
-
-		return entry;
-	}
-
+#pragma region FindExistingEntry
 	// Find the entry which holds InClass
 	int32 i = Inventory.IndexOfByPredicate([InClass](UInventoryEntry* entry)
 		{
 			return InClass == entry->GetInventoryClass();
 		});
 
+	if (i != INDEX_NONE)
+	{
+		// Entry found, simply add InCount to it
+		return Inventory[i]->Add(InCount);
+	}
+#pragma endregion
+
+#pragma region FindEmptyEntry
 	// Find an InventoryEntry with the InventoryClass field set to NULL
-	int32 n = Inventory.IndexOfByPredicate([](UInventoryEntry* entry)
+	i = Inventory.IndexOfByPredicate([](UInventoryEntry* entry)
 		{
 			return entry->GetInventoryClass() == NULL;
 		});
 
-
 	if (i != INDEX_NONE)
 	{
-		// Entry found, simply add InCount to it
-		Inventory[i]->Add(InCount);
+		// Found empty InventoryEntry, initialize the Entry and call it's Add
+		Inventory[i]->InitializeEntry(InClass, 0);
 	}
-	else if (n != INDEX_NONE)
-	{
-		// Found empty InventoryEntry, set i to n and initialize the Entry
-		i = n;
+#pragma endregion
+	
+	UInventoryEntry* entry = CreateNewEntry();
+	entry->InitializeEntry(InClass, 0);
 
-		Inventory[i]->InitializeEntry(InClass, InCount);
-	}
-	else
-	{
-		// Create new entry if both query returned nothing
-		CreateNewEntry()->InitializeEntry(InClass, InCount);
-		i = Inventory.Num() - 1;
-	}
-
-	return Inventory[i];
+	return entry->Add(InCount);
 }
 
 UInventoryEntry* UInventoryList::AddUnique(TSubclassOf<AInventory> InClass)
 {
 	// Test InClass eligibility
-	if (!CanStore(InClass)) { return nullptr; }
-
-	if (!bUniqueEntries) { return Add(InClass, 1); }
+	if (!CanStore(InClass) || !bUniqueEntries) { return nullptr; }
 
 	// Find an InventoryEntry with the InventoryClass field set to NULL
 	int32 i = Inventory.IndexOfByPredicate([](UInventoryEntry* entry)
@@ -98,7 +82,7 @@ UInventoryEntry* UInventoryList::AddUnique(TSubclassOf<AInventory> InClass)
 
 	UInventoryEntry* entry = i != INDEX_NONE ? Inventory[i] : CreateNewEntry();
 
-	entry->InitializeEntry(InClass, 1);
+	entry->InitializeEntry(InClass);
 
 	return entry;
 }

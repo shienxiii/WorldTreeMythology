@@ -41,7 +41,18 @@ bool UInventoryComponent::AddBySubclass(TSubclassOf<AInventory> InInventory, int
 
 	if (!list) { return false; }
 
-	list->Add(InInventory, InCount);
+	if (list->IsUniqueEntriesList())
+	{
+		for (int i = 0; i < InCount; i++)
+		{
+			list->AddUnique(InInventory);
+		}
+	}
+	else
+	{
+		list->Add(InInventory, InCount);
+	}
+
 
 	return true;
 }

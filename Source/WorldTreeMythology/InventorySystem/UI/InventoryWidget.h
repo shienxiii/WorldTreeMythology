@@ -37,6 +37,8 @@ public:
 public:
 	UInventoryWidget(const FObjectInitializer& ObjectInitializer);
 
+	virtual void RefreshQuery(TArray<UInventoryEntry*> InEntry) {}
+
 	virtual void SetIndex(int32 InIndex) { Index = InIndex; }
 
 	bool BindOnAddedToFocus(UObject* InObject, FName InFuncName);

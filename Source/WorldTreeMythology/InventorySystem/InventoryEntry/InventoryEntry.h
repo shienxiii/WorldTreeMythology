@@ -28,7 +28,7 @@ public:
 	/**
 	 * Initializes the InventoryClass and Count variable if InventoryClass is NULL
 	 */
-	UFUNCTION(BlueprintNativeEvent) bool InitializeEntry(TSubclassOf<AInventory> InClass, int32 InCount);
+	UFUNCTION(BlueprintNativeEvent) bool InitializeEntry(TSubclassOf<AInventory> InClass, int32 InCount = 1);
 	
 
 	/**

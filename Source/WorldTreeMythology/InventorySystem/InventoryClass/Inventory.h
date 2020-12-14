@@ -20,7 +20,7 @@ class WORLDTREEMYTHOLOGY_API AInventory : public AActor
 {
 	GENERATED_BODY()
 
-public:
+protected:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Inventory") FString Name = "Some name";
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Inventory") FString Description;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Inventory") UTexture* Icon;

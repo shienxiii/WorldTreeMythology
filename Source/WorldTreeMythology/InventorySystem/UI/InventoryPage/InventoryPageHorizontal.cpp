@@ -16,7 +16,11 @@ TSharedRef<SWidget> UInventoryPageHorizontal::RebuildWidget()
 {
     Panel = SNew(SInventoryPageHorizontal);
 
-    Entries.Empty();
+    if (Entries.Num() > 0)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Clearing Entries"));
+        Entries.Empty();
+    }
 
     for (int i = 0; i < EntryCount && InventoryButtonClass; i++)
     {
@@ -27,4 +31,11 @@ TSharedRef<SWidget> UInventoryPageHorizontal::RebuildWidget()
     }
 
     return Panel.ToSharedRef();
+}
+
+void UInventoryPageHorizontal::ReleaseSlateResources(bool bReleaseChildren)
+{
+    Super::ReleaseSlateResources(bReleaseChildren);
+
+    Panel.Reset();
 }

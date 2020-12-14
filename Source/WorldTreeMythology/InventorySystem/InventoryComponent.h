@@ -44,7 +44,7 @@ public:
 	 * Adds a single unique entry for the passed Inventory class and returns a reference to the entry.
 	 * This is used for when picking up Inventory actors from the game world.
 	 * 
-	 * If the InventoryList for storing the Inventory class, then automatically call AddBySubclass().
+	 * If the InventoryList is for storing the Inventory class, then automatically call AddBySubclass().
 	 *
 	 * @return Reference to the InventoryEntry class created
 	 */

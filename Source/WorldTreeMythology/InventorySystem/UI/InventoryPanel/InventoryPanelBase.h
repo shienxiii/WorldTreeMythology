@@ -6,7 +6,7 @@
 #include "../../InventoryComponent.h"
 #include "../InventoryButton.h"
 #include "../InventoryPage/InventoryPage.h"
-#include "InventoryPanel.generated.h"
+#include "InventoryPanelBase.generated.h"
 
 /**
  * 
@@ -26,6 +26,8 @@ protected:
 	// The minimum number of InventoryWidget to be present on Panel
 	UPROPERTY(EditAnywhere, Category = "Page Setup") uint8 MinEntryCount = 1;
 
+	bool bIsInitialized = false;
+
 	TArray<UInventoryWidget*> Entries;
 	UInventoryWidget* FocusedEntry = nullptr;
 
@@ -38,7 +40,12 @@ public:
 
 public:
 	UInventoryPanelBase(const FObjectInitializer& ObjectInitializer);
-	void SetInventoryComponent(UInventoryComponent* InInventoryComponent) { InventoryComponent = InInventoryComponent; }
+	// NOTE: NativeOnInitialized is only called once, which is when a widget is created
+	void NativeOnInitialized() override;
+	// NOTE: Called everytime widget is undrawn
+	void NativeDestruct() override;
+
+	UFUNCTION(BlueprintCallable) void SetInventoryComponent(UInventoryComponent* InInventoryComponent) { InventoryComponent = InInventoryComponent; }
 
 	UInventoryWidget* AddNewWidget();
 	int32 GetRequiredEntryCount(int32 InQueryCount);
@@ -57,6 +64,7 @@ public:
 	UFUNCTION(BlueprintImplementableEvent) void EntryClickEvent(UInventoryEntry* InEntry);
 	UFUNCTION() virtual void SetFocusedWidget(UInventoryWidget* InEntry) { FocusedEntry = Cast<UInventoryWidget>(InEntry); }
 	UFUNCTION() virtual UWidget* NavigatePanel(EUINavigation InNavigation);
+	UFUNCTION(BlueprintCallable) void ClearFocusedWidget();
 
 	FReply NativeOnFocusReceived(const FGeometry& InGeometry, const FFocusEvent& InFocusEvent) override;
 #if WITH_EDITOR

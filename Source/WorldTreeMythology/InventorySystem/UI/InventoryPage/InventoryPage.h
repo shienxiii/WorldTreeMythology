@@ -25,14 +25,20 @@ protected:
 	FCustomWidgetNavigationDelegate NavigationDelegate;
 public:
 	UInventoryPage(const FObjectInitializer& ObjectInitializer);
+	~UInventoryPage();
 
-	// NOTE: NativePreConstruct is only called once, which is when a widget is first drawm
-	void NativePreConstruct() override;
+	void NativeOnInitialized() override;
+	void NativeDestruct() override;
+	//void ReleaseSlateResources(bool bReleaseChildren) override;
+
 	void SetIndex(int32 InIndex = 0) override;
+
+	void RefreshQuery(TArray<UInventoryEntry*> InEntry) override;
 
 	int32 GetEntryIndex(UInventoryButton* InButton);
 	UInventoryButton* GetEntryAt(int32 InIndex = 0);
 	UInventoryButton* GetFocusedEntry() { return FocusedEntry; }
+	void ClearFocusedWidget() { FocusedEntry = nullptr; }
 	virtual int32 GetEntryCount() { return 0; }
 
 protected:
