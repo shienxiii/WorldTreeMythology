@@ -4,9 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "InventoryWidget.h"
-#include "../../WidgetEX/ButtonEX.h"
 #include "../InventoryEntry/InventoryEntry.h"
 #include "InventoryButton.generated.h"
+
+class UButton;
 
 UENUM(BlueprintType)
 enum class EEntryNullState : uint8
@@ -24,7 +25,7 @@ class WORLDTREEMYTHOLOGY_API UInventoryButton : public UInventoryWidget
 	GENERATED_BODY()
 
 protected:
-	UPROPERTY(meta = (BindWidget)) UButtonEX* EntryButton;
+	UPROPERTY(meta = (BindWidget)) UButton* EntryButton;
 
 	// If the material used for EntryButton's normal, hover and click contains a texture parameter of this name,
 	// sets the texture to the Icon field of the Inventory object pointed by this button

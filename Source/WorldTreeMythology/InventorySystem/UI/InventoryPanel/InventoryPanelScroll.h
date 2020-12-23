@@ -25,15 +25,11 @@ protected:
 	void NativeOnInitialized() override;
 	void NativeDestruct() override;
 
-	// NOTE: NativeOnInitialized is only called everytime the widget is drawn
-	void NativePreConstruct() override;
-
-
 	void SetupNavigation(UWidget* InWidget);
 
 public:
 	void RefreshPanel(TArray<UInventoryEntry*> InQuery) override;
-	void ResizePanel(int32 InEntryCount);
+	void ResizePanel(int32 InEntryCount) override;
 
 	void SetFocusedWidget(UInventoryWidget* InEntry) override;
 };

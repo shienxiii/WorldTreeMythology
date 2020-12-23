@@ -17,12 +17,32 @@ void UInventoryPanelBase::NativeOnInitialized()
 	bIsInitialized = true;
 }
 
+void UInventoryPanelBase::NativePreConstruct()
+{
+	Super::NativePreConstruct();
+
+	UE_LOG(LogTemp, Warning, TEXT("NativePreConstruct"));
+
+	// The purpose of this block of code is only to preview on the UMG editor
+	if (!bIsInitialized)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("NativePreConstruct run initialization"));
+		ResizePanel(MinEntryCount);
+
+		return;
+	}
+
+	if (!InventoryComponent || !bAutoQuery || !InventoryClass) { return; }
+
+	QueryForList(InventoryClass);
+}
+
 void UInventoryPanelBase::NativeDestruct()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Panel %s NativeDestruct"), *(GetFName().ToString()));
 	Super::NativeDestruct();
 	ClearFocusedWidget();
 	Entries.Empty();
-	UE_LOG(LogTemp, Warning, TEXT("%s destruct"), *(GetFName().ToString()));
 }
 
 UInventoryWidget* UInventoryPanelBase::AddNewWidget()
@@ -69,6 +89,7 @@ int32 UInventoryPanelBase::GetEntryIndex(UInventoryWidget* InWidget)
 void UInventoryPanelBase::QueryForList(TSubclassOf<AInventory> InInventoryClass)
 {
 	if (!InventoryComponent) { return; }
+	UE_LOG(LogTemp, Warning, TEXT("QueryForList"));
 	RefreshPanel(InventoryComponent->GetInventoryListFor(InInventoryClass)->QueryForAll());
 }
 

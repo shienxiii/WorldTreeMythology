@@ -2,6 +2,7 @@
 
 
 #include "InventoryButton.h"
+#include "Components/Button.h"
 
 void UInventoryButton::NativeOnInitialized()
 {

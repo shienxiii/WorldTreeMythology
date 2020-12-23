@@ -63,11 +63,19 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable) UInventoryEntry* AddUnique(TSubclassOf<AInventory> InClass);
 
+	// Blueprint overridable function to add custom condition which determines if it is okay to add to this list
+	UFUNCTION(BlueprintNativeEvent) bool CanAddToList();
+	virtual bool CanAddToList_Implementation() { return true; }
+
 	// Checks if bUniqueEntries is true
 	UFUNCTION(BlueprintCallable) bool IsUniqueEntriesList() { return bUniqueEntries; }
 
 	// Returns every InventoryEntry stored on this list, including the empty ones
 	TArray<UInventoryEntry*> QueryForAll() { return Inventory; }
+
+
+	//Find and returns the first InventoryEntry that holds a subclass
+	UInventoryEntry* GetEntryFor(TSubclassOf<AInventory> InSubclass);
 
 	/**
 	 * Queries the list for Inventory that are derived from a subclass, which is derived from BaseClass

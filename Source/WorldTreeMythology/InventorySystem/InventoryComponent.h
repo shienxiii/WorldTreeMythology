@@ -34,11 +34,9 @@ public:
 	 * Add Inventory to it's respective list. Added Inventory will be in their default base form.
 	 * If adding with unique trait, use AddByActor() instead, which will return the InventoryEntry created to add unique traits
 	 * 
-	 * @return true if successfully added to Inventory
+	 * @return number of items not added to this InventoryComponent
 	 */
-	UFUNCTION(BlueprintCallable) bool AddBySubclass(TSubclassOf<AInventory> InInventory, int32 InCount = 1);
-
-	//UFUNCTION(BlueprintCallable) bool AddInventoryByEntry(UInventoryEntry* InInventoryEntry);
+	UFUNCTION(BlueprintCallable) int32 AddBySubclass(TSubclassOf<AInventory> InInventory, int32 InCount = 1);
 
 	/**
 	 * Adds a single unique entry for the passed Inventory class and returns a reference to the entry.
@@ -49,6 +47,9 @@ public:
 	 * @return Reference to the InventoryEntry class created
 	 */
 	UFUNCTION(BlueprintCallable) UInventoryEntry* AddByActor(AInventory* InInventory);
+
+	//UFUNCTION(BlueprintCallable) bool AddInventoryByEntry(UInventoryEntry* InInventoryEntry, bool b);
+
 
 #pragma region InventoryList
 	UFUNCTION(BlueprintCallable) TArray<UInventoryEntry*> QueryForSubclass(TSubclassOf<AInventory> InSubclass);

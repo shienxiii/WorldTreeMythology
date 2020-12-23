@@ -6,10 +6,7 @@
 void UInventoryPanelScroll::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
-	UE_LOG(LogTemp, Warning, TEXT("OnInitialized"));
-	if (!InventoryWidgetClass || !Panel) { return; }
-
-	ResizePanel(MinEntryCount);
+	UE_LOG(LogTemp, Warning, TEXT("NativeOnInitialized"));
 }
 
 void UInventoryPanelScroll::NativeDestruct()
@@ -17,20 +14,9 @@ void UInventoryPanelScroll::NativeDestruct()
 	Super::NativeDestruct();
 	Panel->ClearChildren();
 	
+	UE_LOG(LogTemp, Warning, TEXT("NativeDestruct"));
+
 	GetWorld()->ForceGarbageCollection(true);
-}
-
-void UInventoryPanelScroll::NativePreConstruct()
-{
-	Super::NativePreConstruct();
-
-	if (!bIsInitialized)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("PreConstruct"));
-		if (!InventoryWidgetClass || !Panel) { return; }
-
-		ResizePanel(MinEntryCount);
-	}
 }
 
 void UInventoryPanelScroll::SetupNavigation(UWidget* InWidget)
@@ -65,6 +51,8 @@ void UInventoryPanelScroll::RefreshPanel(TArray<UInventoryEntry*> InQuery)
 
 void UInventoryPanelScroll::ResizePanel(int32 InEntryCount)
 {
+	if (!InventoryWidgetClass || !Panel) { return; }
+
 	if (InEntryCount < Panel->GetChildrenCount() && InEntryCount > MinEntryCount)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("ResizeDown"));

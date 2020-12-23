@@ -35,7 +35,7 @@ void UInventoryComponent::SetIsStorage(bool InIsStorage)
 	}
 }
 
-bool UInventoryComponent::AddBySubclass(TSubclassOf<AInventory> InInventory, int32 InCount)
+int32 UInventoryComponent::AddBySubclass(TSubclassOf<AInventory> InInventory, int32 InCount)
 {
 	UInventoryList* list = GetInventoryListFor(InInventory);
 
@@ -43,18 +43,17 @@ bool UInventoryComponent::AddBySubclass(TSubclassOf<AInventory> InInventory, int
 
 	if (list->IsUniqueEntriesList())
 	{
-		for (int i = 0; i < InCount; i++)
+		int excess = InCount;
+
+		while (excess > 0 && list->AddUnique(InInventory))
 		{
-			list->AddUnique(InInventory);
+			excess--;
 		}
-	}
-	else
-	{
-		list->Add(InInventory, InCount);
+
+		return excess;
 	}
 
-
-	return true;
+	return list->Add(InInventory, InCount);
 }
 
 UInventoryEntry* UInventoryComponent::AddByActor(AInventory* InInventory)
@@ -63,10 +62,15 @@ UInventoryEntry* UInventoryComponent::AddByActor(AInventory* InInventory)
 
 	if (!list) { return nullptr; }
 
+	// Test if the list is a unique entry type
 	if (!list->IsUniqueEntriesList())
 	{
-		AddBySubclass(InInventory->StaticClass(), 1);
-		return nullptr;
+		// Try to add
+		if (list->Add(InInventory->StaticClass(), 1) == 0)
+		{
+			return list->GetEntryFor(InInventory->StaticClass());
+		}
+		else { return nullptr; }
 	}
 
 	return list->AddUnique(InInventory->GetClass());

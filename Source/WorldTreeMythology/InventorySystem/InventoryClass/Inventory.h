@@ -36,8 +36,12 @@ public:
 	// Sets default values for this actor's properties
 	AInventory();
 
-	FString GetInventoryName() { return Name; }
-	FString GetDescription() { return Description; }
+	UFUNCTION(BlueprintPure, BlueprintNativeEvent) FString GetInventoryName();
+	virtual FString GetInventoryName_Implementation() { return Name; }
+
+	UFUNCTION(BlueprintPure, BlueprintNativeEvent) FString GetDescription();
+	virtual FString GetDescription_Implementation() { return Description; }
+
 	UTexture* GetIcon() { return Icon; }
 
 	int32 GetMaxCarry() { return maxCarry; }

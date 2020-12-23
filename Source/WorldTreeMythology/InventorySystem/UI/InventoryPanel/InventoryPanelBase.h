@@ -20,28 +20,39 @@ protected:
 	// Reference to the InventoryComponent that this instance will query
 	UInventoryComponent* InventoryComponent = nullptr;
 
+	// Whether to automatically query the InventoryComponent when added to viewport
+	UPROPERTY(EditAnywhere, Category = "Panel Setup") bool bAutoQuery = true;
+
+	// The Inventory class that this panel will query for when added to viewport
+	UPROPERTY(EditAnywhere, Category = "Panel Setup") TSubclassOf<AInventory> InventoryClass = NULL;
+
 	// The InventoryWidget class that this InventoryPanel will fill Panel with
-	UPROPERTY(EditAnywhere, Category = "Page Setup")TSubclassOf<UInventoryWidget> InventoryWidgetClass = NULL;
+	UPROPERTY(EditAnywhere, Category = "Panel Setup") TSubclassOf<UInventoryWidget> InventoryWidgetClass = NULL;
 
 	// The minimum number of InventoryWidget to be present on Panel
-	UPROPERTY(EditAnywhere, Category = "Page Setup") uint8 MinEntryCount = 1;
+	UPROPERTY(EditAnywhere, Category = "Panel Setup") uint8 MinEntryCount = 1;
 
 	bool bIsInitialized = false;
 
 	TArray<UInventoryWidget*> Entries;
-	UInventoryWidget* FocusedEntry = nullptr;
+	UPROPERTY(BlueprintReadOnly) UInventoryWidget* FocusedEntry = nullptr;
 
 	FCustomWidgetNavigationDelegate NavigationDelegate;
 
 public:
-	FInventoryEntryBPEvent OnEntryHovered;
-	FInventoryEntryBPEvent OnEntryClicked;
+	UPROPERTY(BlueprintAssignable) FInventoryEntryBPEvent OnEntryHovered;
+	UPROPERTY(BlueprintAssignable) FInventoryEntryBPEvent OnEntryClicked;
 
 
 public:
 	UInventoryPanelBase(const FObjectInitializer& ObjectInitializer);
+
 	// NOTE: NativeOnInitialized is only called once, which is when a widget is created
 	void NativeOnInitialized() override;
+
+	// NOTE: NativePreConstruct is called everytime the widget is drawn
+	void NativePreConstruct() override;
+
 	// NOTE: Called everytime widget is undrawn
 	void NativeDestruct() override;
 
@@ -56,10 +67,11 @@ public:
 	UFUNCTION(BlueprintCallable) void QueryForList(TSubclassOf<AInventory> InInventoryClass);
 
 	virtual void RefreshPanel(TArray<UInventoryEntry*> InQuery) {}
+	virtual void ResizePanel(int32 InEntryCount) {}
 #pragma endregion
 
-	UFUNCTION() void NativeEntryHoverEvent(UInventoryEntry* InEntry);
-	UFUNCTION() void NativeEntryClickEvent(UInventoryEntry* InEntry);
+	UFUNCTION() virtual void NativeEntryHoverEvent(UInventoryEntry* InEntry);
+	UFUNCTION() virtual void NativeEntryClickEvent(UInventoryEntry* InEntry);
 	UFUNCTION(BlueprintImplementableEvent) void EntryHoverEvent(UInventoryEntry* InEntry);
 	UFUNCTION(BlueprintImplementableEvent) void EntryClickEvent(UInventoryEntry* InEntry);
 	UFUNCTION() virtual void SetFocusedWidget(UInventoryWidget* InEntry) { FocusedEntry = Cast<UInventoryWidget>(InEntry); }
