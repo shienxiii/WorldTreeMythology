@@ -16,11 +16,11 @@ class WORLDTREEMYTHOLOGY_API UInventoryEntry : public UObject
 	GENERATED_BODY()
 	
 protected:
-	UPROPERTY(BlueprintReadOnly) TSubclassOf<AInventory> InventoryClass = NULL;
+	UPROPERTY(BlueprintReadOnly) TSubclassOf<AInventoryObject> InventoryClass = NULL;
 	UPROPERTY(BlueprintReadOnly) int32 Count = 0;
 
-	// Whether to set InventoryClass to NULL when Count == 0 on Remove()
-	UPROPERTY(BlueprintReadOnly, EditAnywhere) bool bNullOnEmpty = true;
+	// Whether to set null this InventoryEntry when Count == 0 on Remove()
+	UPROPERTY(BlueprintReadOnly, EditAnywhere) bool bClearOnEmpty = true;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere) bool bIsStorage = false;
 
@@ -28,25 +28,38 @@ public:
 	/**
 	 * Initializes the InventoryClass and Count variable if InventoryClass is NULL
 	 */
-	UFUNCTION(BlueprintNativeEvent) bool InitializeEntry(TSubclassOf<AInventory> InClass, int32 InCount = 1);
+	UFUNCTION(BlueprintNativeEvent) bool InitializeEntry(TSubclassOf<AInventoryObject> InClass, int32 InCount = 1);
+	bool InitializeEntry_Implementation(TSubclassOf<AInventoryObject> InClass, int32 InCount);
 	
 
 	/**
-	 * Attempt to increment InCount number of item to Count and return the number of item remaining if capacity is reached
+	 * Attempt to increment Count by InCount
 	 * 
 	 * @param InCount The increment to Count
 	 * 
-	 * @return remainder of item not added to Count
+	 * @return Remainder of InCount not added to Count
 	 */
 	UFUNCTION(BlueprintCallable) int32 Add(int32 InCount = 1);
 
 	/**
-	 * Remove the InCount number of item from Count.
-	 * If Count reaches 0 and bNullOnEmpty is true, nullify this entry
+	 * Decrement Count by InCount
+	 * If Count reaches 0 and bClearOnEmpty is true, nullify this entry
+	 * 
+	 * @param InCount Number of iten to remove
+	 * 
+	 * @return Remaining value of Count
 	 */
-	UFUNCTION(BlueprintCallable) void Remove(int32 InCount = 1);
+	UFUNCTION(BlueprintCallable) int32 Remove(int32 InCount = 1);
 
-	TSubclassOf<AInventory> GetInventoryClass() { return InventoryClass; }
+	/**
+	 * Clears this instance of InventoryEntry, making it available to be initialized.
+	 * Can be overriden in BP
+	 */
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent) void ClearEntry();
+	virtual void ClearEntry_Implementation();
+
+
+	TSubclassOf<AInventoryObject> GetInventoryClass() { return InventoryClass; }
 	int32 GetCount() { return Count; }
 
 	// Gets the remaining increment that can be added to this InventoryEntry
@@ -60,10 +73,12 @@ public:
 	 * 
 	 * @param InBaseClass The base class to test
 	 */
-	UFUNCTION(BlueprintPure) bool IsChildOf(TSubclassOf<AInventory> InBaseClass);
+	UFUNCTION(BlueprintPure) bool IsChildOf(TSubclassOf<AInventoryObject> InBaseClass);
 
-	UFUNCTION(BlueprintPure) AInventory* GetInventoryDefault() { return InventoryClass.GetDefaultObject(); }
+	UFUNCTION(BlueprintPure) AInventoryObject* GetInventoryDefault() { return InventoryClass.GetDefaultObject(); }
 
-	UFUNCTION(BlueprintPure) bool GetIsStorage() { return bIsStorage; }
+	UFUNCTION(BlueprintPure) bool IsEmptyEntry() { return InventoryClass == NULL; }
+
+	UFUNCTION(BlueprintPure) bool IsStorage() { return bIsStorage; }
 	void SetIsStorage(bool InIsStorage) { bIsStorage = InIsStorage; }
 };

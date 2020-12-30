@@ -86,11 +86,11 @@ int32 UInventoryPanelBase::GetEntryIndex(UInventoryWidget* InWidget)
 	return index;
 }
 
-void UInventoryPanelBase::QueryForList(TSubclassOf<AInventory> InInventoryClass)
+void UInventoryPanelBase::QueryForList(TSubclassOf<AInventoryObject> InInventoryClass)
 {
 	if (!InventoryComponent) { return; }
 	UE_LOG(LogTemp, Warning, TEXT("QueryForList"));
-	RefreshPanel(InventoryComponent->GetInventoryListFor(InInventoryClass)->QueryForAll());
+	RefreshPanel(InventoryComponent->QueryByBaseClass(InInventoryClass));
 }
 
 void UInventoryPanelBase::NativeEntryHoverEvent(UInventoryEntry* InEntry)

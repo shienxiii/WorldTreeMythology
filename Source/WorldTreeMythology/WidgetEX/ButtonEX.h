@@ -15,8 +15,6 @@ class WORLDTREEMYTHOLOGY_API UButtonEX : public UButton
 {
 	GENERATED_BODY()
 
-public:
-	
 protected:
 	UButtonEX(const FObjectInitializer& ObjectInitializer);
 

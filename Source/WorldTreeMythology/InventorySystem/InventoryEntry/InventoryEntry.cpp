@@ -3,7 +3,7 @@
 
 #include "InventoryEntry.h"
 
-bool UInventoryEntry::InitializeEntry_Implementation(TSubclassOf<AInventory> InClass, int32 InCount)
+bool UInventoryEntry::InitializeEntry_Implementation(TSubclassOf<AInventoryObject> InClass, int32 InCount)
 {
     // Only initialize if InventoryClass is NULL
     if (InventoryClass) { return false; }
@@ -24,16 +24,23 @@ int32 UInventoryEntry::Add(int32 InCount)
     return excess;
 }
 
-void UInventoryEntry::Remove(int32 InCount)
+int32 UInventoryEntry::Remove(int32 InCount)
 {
     if (InCount > Count) { Count = 0; }
     else { Count -= InCount; }
 
-    if (Count == 0 && bNullOnEmpty)
+    if (Count == 0 && bClearOnEmpty)
     {
-        InventoryClass = NULL;
-        Count = 0;
+        ClearEntry();
     }
+
+    return Count;
+}
+
+void UInventoryEntry::ClearEntry_Implementation()
+{
+    InventoryClass = NULL;
+    Count = 0;
 }
 
 int32 UInventoryEntry::GetRemainingCount()
@@ -53,7 +60,7 @@ int32 UInventoryEntry::GetMaxCount()
     }
 }
 
-bool UInventoryEntry::IsChildOf(TSubclassOf<AInventory> InBaseClass)
+bool UInventoryEntry::IsChildOf(TSubclassOf<AInventoryObject> InBaseClass)
 {
     if (!InventoryClass) { return false; }
 

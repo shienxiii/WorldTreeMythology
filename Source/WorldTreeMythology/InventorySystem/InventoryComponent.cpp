@@ -35,57 +35,56 @@ void UInventoryComponent::SetIsStorage(bool InIsStorage)
 	}
 }
 
-int32 UInventoryComponent::AddBySubclass(TSubclassOf<AInventory> InInventory, int32 InCount)
+int32 UInventoryComponent::AddBySubclass(TSubclassOf<AInventoryObject> InInventory, int32 InCount)
 {
 	UInventoryList* list = GetInventoryListFor(InInventory);
 
-	if (!list) { return false; }
+	if (!list) { return InCount; }
 
-	if (list->IsUniqueEntriesList())
-	{
-		int excess = InCount;
-
-		while (excess > 0 && list->AddUnique(InInventory))
-		{
-			excess--;
-		}
-
-		return excess;
-	}
-
-	return list->Add(InInventory, InCount);
+	return list->AddMultiple(InInventory, InCount);
 }
 
-UInventoryEntry* UInventoryComponent::AddByActor(AInventory* InInventory)
+UInventoryEntry* UInventoryComponent::AddByActor(AInventoryObject* InInventory, bool bDestroyActor)
 {
 	UInventoryList* list = GetInventoryListFor(InInventory->GetClass());
 
 	if (!list) { return nullptr; }
 
-	// Test if the list is a unique entry type
-	if (!list->IsUniqueEntriesList())
-	{
-		// Try to add
-		if (list->Add(InInventory->StaticClass(), 1) == 0)
-		{
-			return list->GetEntryFor(InInventory->StaticClass());
-		}
-		else { return nullptr; }
-	}
+	UInventoryEntry* entry = list->AddByActor(InInventory);
 
-	return list->AddUnique(InInventory->GetClass());
+	if (bDestroyActor) { InInventory->Destroy(); }
+
+	return entry;
 }
 
-TArray<UInventoryEntry*> UInventoryComponent::QueryForSubclass(TSubclassOf<AInventory> InSubclass)
+TArray<UInventoryEntry*> UInventoryComponent::QueryByBaseClass(TSubclassOf<AInventoryObject> InInventoryClass, bool bClearEmptyEntries)
+{
+	TArray<UInventoryList*> lists = Inventory.FilterByPredicate([InInventoryClass](UInventoryList* list)
+		{
+			return list->GetBaseInventoryClass().Get()->IsChildOf(InInventoryClass);
+		}
+	);
+
+	TArray<UInventoryEntry*> entries;
+
+	for (int i = 0; i < lists.Num(); i++)
+	{
+		entries += lists[i]->QueryForAll(bClearEmptyEntries);
+	}
+
+	return entries;
+}
+
+TArray<UInventoryEntry*> UInventoryComponent::QueryBySubclass(TSubclassOf<AInventoryObject> InSubclass)
 {
 	UInventoryList* list = GetInventoryListFor(InSubclass);
 
 	if (!list) { return TArray<UInventoryEntry*>(); }
 
-	return list->QueryForSubclass(InSubclass);
+	return list->QueryBySubclass(InSubclass);
 }
 
-TArray<UInventoryEntry*> UInventoryComponent::CustomQuery(TSubclassOf<AInventory> InInventoryClass, uint8 InQueryEnum)
+TArray<UInventoryEntry*> UInventoryComponent::CustomQuery(TSubclassOf<AInventoryObject> InInventoryClass, uint8 InQueryEnum)
 {
 	UInventoryList* list = GetInventoryListFor(InInventoryClass);
 
@@ -94,19 +93,12 @@ TArray<UInventoryEntry*> UInventoryComponent::CustomQuery(TSubclassOf<AInventory
 	return list->CustomQuery(InQueryEnum);
 }
 
-UInventoryList* UInventoryComponent::GetInventoryListFor(TSubclassOf<AInventory> InInventoryClass)
+UInventoryList* UInventoryComponent::GetInventoryListFor(TSubclassOf<AInventoryObject> InInventoryClass)
 {
-	int32 i = IndexOfList(InInventoryClass);
-
-	if (i == INDEX_NONE) { return nullptr; }
-
-	return Inventory[i];
-}
-
-int32 UInventoryComponent::IndexOfList(TSubclassOf<AInventory> InInventoryClass)
-{
-	return Inventory.IndexOfByPredicate([InInventoryClass](UInventoryList* List)
+	UInventoryList** listRef = Inventory.FindByPredicate([InInventoryClass](UInventoryList* list)
 		{
-			return List->CanStore(InInventoryClass);
+			return list->CanStore(InInventoryClass);
 		});
+
+	return listRef ? *listRef : nullptr;
 }

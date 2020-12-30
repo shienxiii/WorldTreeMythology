@@ -3,37 +3,115 @@
 
 #include "InventoryList.h"
 
-void UInventoryList::MofifyListSize(int32 InCount)
+void UInventoryList::ResizeList(int32 InCount)
 {
 	if (Inventory.Num() < InCount)
 	{
 		while (Inventory.Num() < InCount)
 		{
-			CreateNewEntry();
+			CreateNewEntries();
 		}
 	}
 	else
 	{
 		while (Inventory.Num() > InCount && 
-			(Inventory[Inventory.Num() - 1]->GetInventoryClass()) == NULL)
+			Inventory.Num() - (EntryMultiplier - 1) >= InCount &&
+			(RemoveEntries()))
 		{
-			Inventory.RemoveAt(Inventory.Num() - 1, 1, true);
+			// Loop until false
 		}
 	}
 }
 
-UInventoryEntry* UInventoryList::CreateNewEntry()
+UInventoryEntry* UInventoryList::CreateNewEntries()
 {
-	int i = Inventory.Add(NewObject<UInventoryEntry>(this, EntryClass));
-	Inventory[i]->SetIsStorage(bIsStorage);
+	int index = Inventory.Num();
 
-	return Inventory[i];
+	for (int i = 0; i < EntryMultiplier; i++)
+	{
+		int n = Inventory.Add(NewObject<UInventoryEntry>(this, EntryClass));
+		Inventory[n]->SetIsStorage(bIsStorage);
+	}
+
+	return Inventory[index];
 }
 
-int32 UInventoryList::Add(TSubclassOf<AInventory> InClass, int32 InCount)
+bool UInventoryList::RemoveEntries()
+{
+	bool bCanRemove = true;
+
+	// Get the last index of the array
+	int n = Inventory.Num() - 1;
+
+	// Check if can remove the the last set of entries based on the EntryMultiplier property
+	for (int i = 0; i < EntryMultiplier && bCanRemove; i++)
+	{
+		if (!Inventory[n - i] || !(Inventory[n - i]->IsEmptyEntry())) { bCanRemove = false; }
+	}
+
+	if (!bCanRemove) { return false; }
+	
+	Inventory.RemoveAt(n - (EntryMultiplier - 1), EntryMultiplier, true);
+
+	return true;
+}
+
+UInventoryEntry* UInventoryList::AddSingle(TSubclassOf<AInventoryObject> InClass)
+{
+	// Test InClass eligibility
+	if (!CanStore(InClass) || !CanAddToList()) { return nullptr; }
+
+#pragma region FindExistingEntry
+	if (!bUniqueEntries)
+	{
+		if (UInventoryEntry* entry = GetEntryFor(InClass))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Adding to existing entry"));
+
+			return entry->Add(1) == 0 ? entry : nullptr;
+		}
+	}
+#pragma endregion
+
+	// Find an InventoryEntry with the InventoryClass field set to NULL
+	int32 i = Inventory.IndexOfByPredicate([](UInventoryEntry* entry)
+		{
+			return entry->GetInventoryClass() == NULL;
+		});
+
+	if (i == INDEX_NONE)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Adding to empty slot"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("creating new entry"));
+	}
+
+	UInventoryEntry* entry = i != INDEX_NONE ? Inventory[i] : CreateNewEntries();
+
+	entry->InitializeEntry(InClass);
+
+	return entry;
+}
+
+int32 UInventoryList::AddMultiple(TSubclassOf<AInventoryObject> InClass, int32 InCount)
 {
 	// Test InClass eligibility and whether this list can run this function
-	if (!CanStore(InClass) || bUniqueEntries || !CanAddToList()) { return InCount; }
+	if (!CanStore(InClass) || !CanAddToList()) { return InCount; }
+
+
+	if (bUniqueEntries)
+	{
+		int32 excess = InCount;
+
+		while (excess > 0 && AddSingle(InClass))
+		{
+			excess--;
+		}
+
+		return excess;
+	}
 
 #pragma region FindExistingEntry
 	// Find the entry which holds InClass
@@ -61,40 +139,31 @@ int32 UInventoryList::Add(TSubclassOf<AInventory> InClass, int32 InCount)
 #pragma endregion
 	
 	UE_LOG(LogTemp, Warning, TEXT("creating new entry"));
-	UInventoryEntry* entry = CreateNewEntry();
+	UInventoryEntry* entry = CreateNewEntries();
 	entry->InitializeEntry(InClass, 0);
 
 	return entry->Add(InCount);
 }
 
-UInventoryEntry* UInventoryList::AddUnique(TSubclassOf<AInventory> InClass)
+UInventoryEntry* UInventoryList::AddByActor_Implementation(AInventoryObject* InActor)
 {
-	// Test InClass eligibility
-	if (!CanStore(InClass) || !bUniqueEntries || !CanAddToList()) { return nullptr; }
-
-	// Find an InventoryEntry with the InventoryClass field set to NULL
-	int32 i = Inventory.IndexOfByPredicate([](UInventoryEntry* entry)
-		{
-			return entry->GetInventoryClass() == NULL;
-		});
-
-	if (i == INDEX_NONE)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Adding to empty slot"));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("creating new entry"));
-	}
-
-	UInventoryEntry* entry = i != INDEX_NONE ? Inventory[i] : CreateNewEntry();
-
-	entry->InitializeEntry(InClass);
+	UInventoryEntry* entry = AddSingle(InActor->GetClass());
 
 	return entry;
 }
 
-UInventoryEntry* UInventoryList::GetEntryFor(TSubclassOf<AInventory> InSubclass)
+
+TArray<UInventoryEntry*> UInventoryList::QueryForAll(bool bClearEmptyEntries)
+{
+	if(!bClearEmptyEntries) { return Inventory; }
+
+	return Inventory.FilterByPredicate([](UInventoryEntry* entry)
+		{
+			return entry->GetInventoryClass() != NULL;
+		});
+}
+
+UInventoryEntry* UInventoryList::GetEntryFor(TSubclassOf<AInventoryObject> InSubclass)
 {
 	UInventoryEntry** entry = Inventory.FindByPredicate([InSubclass](UInventoryEntry* entry)
 								{
@@ -105,7 +174,7 @@ UInventoryEntry* UInventoryList::GetEntryFor(TSubclassOf<AInventory> InSubclass)
 	return entry ? *entry : nullptr;
 }
 
-TArray<UInventoryEntry*> UInventoryList::QueryForSubclass(TSubclassOf<AInventory> InSubclass)
+TArray<UInventoryEntry*> UInventoryList::QueryBySubclass(TSubclassOf<AInventoryObject> InSubclass)
 {
 	if (InSubclass == NULL)
 	{
@@ -125,10 +194,10 @@ TArray<UInventoryEntry*> UInventoryList::QueryForSubclass(TSubclassOf<AInventory
 
 TArray<UInventoryEntry*> UInventoryList::CustomQuery_Implementation(uint8 InQueryEnum)
 {
-	return QueryForSubclass();
+	return QueryBySubclass();
 }
 
-bool UInventoryList::CanStore(TSubclassOf<AInventory> InInventoryClass)
+bool UInventoryList::CanStore(TSubclassOf<AInventoryObject> InInventoryClass)
 {
 	return InInventoryClass.Get()->IsChildOf(BaseInventoryClass);
 }

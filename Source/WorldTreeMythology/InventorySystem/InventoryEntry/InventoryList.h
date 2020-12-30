@@ -22,9 +22,12 @@ protected:
 
 	// The base class of all Inventory object that this class will store.
 	// Only classes that inherited from this base class can be stored
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Inventory") TSubclassOf<AInventory> BaseInventoryClass = AInventory::StaticClass();
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Inventory") TSubclassOf<AInventoryObject> BaseInventoryClass = AInventoryObject::StaticClass();
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Inventory") TSubclassOf<UInventoryEntry> EntryClass = UInventoryEntry::StaticClass();
+
+	// This defines the number of InventoryEntry to create or remove each time CreateNewEntries() or RemoveEntry() gets called
+	UPROPERTY(EditAnywhere, Category = "Inventory") int32 EntryMultiplier = 1;
 
 	/**
 	 * Determines whether the copies of the same Inventory class will be grouped in the same entry.
@@ -36,14 +39,32 @@ protected:
 
 public:
 	/**
-	 * Modify the list to a specific size.
+	 * Modify the list to fit a specific number of InventoryEntry
 	 * If new size is larger than the current size, all the added InventoryEntry will be an empty entry.
 	 * If new size is smaller than the current size, the list will be reduced to either the target size or the last non-empty entry
 	 */
-	UFUNCTION(BlueprintCallable) void MofifyListSize(int32 InCount);
+	UFUNCTION(BlueprintCallable) void ResizeList(int32 InCount);
 
-	// Create a new empty Entry
-	UInventoryEntry* CreateNewEntry();
+	/**
+	 * Add a new set of InventoryEntry based on the EntryMultiplier
+	 * 
+	 * @return The first entry of the newly created InventoryEntry
+	 */
+	UInventoryEntry* CreateNewEntries();
+
+	/**
+	 * Remove a set if InventoryEntry based on the EntryMultiplier
+	 */
+	bool RemoveEntries();
+
+	/**
+	 * Adds a single unique entry for the passed Inventory class and returns a pointer to the entry.
+	 * 
+	 * Does not add anything to the list if bUniqueEntries is false. Use Add() instead in this case.
+	 * 
+	 * @return Reference to the entry of the added inventory
+	 */
+	UFUNCTION(BlueprintCallable) UInventoryEntry* AddSingle(TSubclassOf<AInventoryObject> InClass);
 
 	/**
 	 * Adds InCount number of the passed Inventory class and returns the assigned InventoryEntry if successful.
@@ -51,17 +72,18 @@ public:
 	 * 
 	 * @return Reference to the entry of the added inventory
 	 */
-	UFUNCTION(BlueprintCallable) int32 Add(TSubclassOf<AInventory> InClass, int32 InCount = 1);
+	UFUNCTION(BlueprintCallable) int32 AddMultiple(TSubclassOf<AInventoryObject> InClass, int32 InCount = 1);
 
 	/**
-	 * Adds a single unique entry for the passed Inventory class and returns a pointer to the entry.
+	 * Takes a single InventoryObject actor reference and adds it to this InventoryList.
 	 * 
-	 * NOTE TO SELF: make BlueprintNativeEvent
-	 * Does not add anything to the list if bUniqueEntries is false. Use Add() instead in this case.
+	 * @param InActor Reference to the InventoryObject actor to add the this list
 	 * 
-	 * @return Reference to the entry of the added inventory
+	 * @return The InventoryEntry that holds the newly added InventoryObject
 	 */
-	UFUNCTION(BlueprintCallable) UInventoryEntry* AddUnique(TSubclassOf<AInventory> InClass);
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent) UInventoryEntry* AddByActor(AInventoryObject* InActor);
+	virtual UInventoryEntry* AddByActor_Implementation(AInventoryObject* InActor);
+
 
 	// Blueprint overridable function to add custom condition which determines if it is okay to add to this list
 	UFUNCTION(BlueprintNativeEvent) bool CanAddToList();
@@ -70,20 +92,24 @@ public:
 	// Checks if bUniqueEntries is true
 	UFUNCTION(BlueprintCallable) bool IsUniqueEntriesList() { return bUniqueEntries; }
 
-	// Returns every InventoryEntry stored on this list, including the empty ones
-	TArray<UInventoryEntry*> QueryForAll() { return Inventory; }
+	/**
+	 * Returns every InventoryEntry stored on this list, optionally exclude empty entries
+	 * 
+	 * @param bEmptyEntries When set to true, filters out InventoryEntry that are empty
+	 */
+	TArray<UInventoryEntry*> QueryForAll(bool bClearEmptyEntries = false);
 
 
-	//Find and returns the first InventoryEntry that holds a subclass
-	UInventoryEntry* GetEntryFor(TSubclassOf<AInventory> InSubclass);
+	//Find and returns the first InventoryEntry that holds the subclass
+	UInventoryEntry* GetEntryFor(TSubclassOf<AInventoryObject> InSubclass);
 
 	/**
-	 * Queries the list for Inventory that are derived from a subclass, which is derived from BaseClass
+	 * Queries the list for InventoryObject that are derived from a subclass.
 	 * Does not return empty entries.
 	 * 
-	 * @param InSubclass Subclass of the Inventory to return, must be derived from BaseClass
+	 * @param InSubclass Subclass of the Inventory to return.
 	 */
-	TArray<UInventoryEntry*> QueryForSubclass(TSubclassOf<AInventory> InSubclass = NULL);
+	TArray<UInventoryEntry*> QueryBySubclass(TSubclassOf<AInventoryObject> InSubclass = NULL);
 
 	/**
 	 * BP overriden function to allow custom made query to work seamlessly with InventoryComponent
@@ -95,12 +121,12 @@ public:
 	/**
 	 * Gets the base class that all objects in this list should be derived from
 	 */
-	UFUNCTION(BlueprintPure) TSubclassOf<AInventory> GetBaseInventoryClass() { return BaseInventoryClass; }
+	UFUNCTION(BlueprintPure) TSubclassOf<AInventoryObject> GetBaseInventoryClass() { return BaseInventoryClass; }
 
 	/**
 	 * Checks to see if the passed class type can be stored in this InventoryList
 	 */
-	UFUNCTION(BlueprintCallable) bool CanStore(TSubclassOf<AInventory> InInventoryClass);
+	UFUNCTION(BlueprintCallable) bool CanStore(TSubclassOf<AInventoryObject> InInventoryClass);
 
 	void SetIsStorage(bool InIsStorage) { bIsStorage = InIsStorage; }
 };

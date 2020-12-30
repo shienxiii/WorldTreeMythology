@@ -16,7 +16,7 @@ class UInventoryEntry;
  * StaticMeshComponent - Mesh, GetMesh()
  */
 UCLASS()
-class WORLDTREEMYTHOLOGY_API AInventory : public AActor
+class WORLDTREEMYTHOLOGY_API AInventoryObject : public AActor
 {
 	GENERATED_BODY()
 
@@ -34,7 +34,7 @@ protected:
 	
 public:	
 	// Sets default values for this actor's properties
-	AInventory();
+	AInventoryObject();
 
 	UFUNCTION(BlueprintPure, BlueprintNativeEvent) FString GetInventoryName();
 	virtual FString GetInventoryName_Implementation() { return Name; }

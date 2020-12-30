@@ -24,7 +24,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Panel Setup") bool bAutoQuery = true;
 
 	// The Inventory class that this panel will query for when added to viewport
-	UPROPERTY(EditAnywhere, Category = "Panel Setup") TSubclassOf<AInventory> InventoryClass = NULL;
+	UPROPERTY(EditAnywhere, Category = "Panel Setup") TSubclassOf<AInventoryObject> InventoryClass = NULL;
 
 	// The InventoryWidget class that this InventoryPanel will fill Panel with
 	UPROPERTY(EditAnywhere, Category = "Panel Setup") TSubclassOf<UInventoryWidget> InventoryWidgetClass = NULL;
@@ -56,6 +56,10 @@ public:
 	// NOTE: Called everytime widget is undrawn
 	void NativeDestruct() override;
 
+	// Gets the InventoryComponent linked to this InventoryPanel
+	UFUNCTION(BlueprintCallable) UInventoryComponent* GetInventoryComponent() { return InventoryComponent; }
+
+	// Link this InventoryComponent to an InventoryComponent
 	UFUNCTION(BlueprintCallable) void SetInventoryComponent(UInventoryComponent* InInventoryComponent) { InventoryComponent = InInventoryComponent; }
 
 	UInventoryWidget* AddNewWidget();
@@ -64,7 +68,7 @@ public:
 
 #pragma region Query
 	// Query for the content of the InventoryList that can hold InInventoryClass, including empty entries
-	UFUNCTION(BlueprintCallable) void QueryForList(TSubclassOf<AInventory> InInventoryClass);
+	UFUNCTION(BlueprintCallable) void QueryForList(TSubclassOf<AInventoryObject> InInventoryClass);
 
 	virtual void RefreshPanel(TArray<UInventoryEntry*> InQuery) {}
 	virtual void ResizePanel(int32 InEntryCount) {}
