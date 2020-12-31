@@ -197,6 +197,24 @@ TArray<UInventoryEntry*> UInventoryList::CustomQuery_Implementation(uint8 InQuer
 	return QueryBySubclass();
 }
 
+bool UInventoryList::Swap(UInventoryEntry* EntryA, UInventoryEntry* EntryB)
+{
+	int a = Inventory.IndexOfByPredicate([EntryA](UInventoryEntry* entry)
+		{
+			return entry == EntryA;
+		});
+
+	int b = Inventory.IndexOfByPredicate([EntryB](UInventoryEntry* entry)
+		{
+			return entry == EntryB;
+		});
+
+	if (!a || !b) { return false; }
+
+	Inventory.Swap(a, b);
+	return true;
+}
+
 bool UInventoryList::CanStore(TSubclassOf<AInventoryObject> InInventoryClass)
 {
 	return InInventoryClass.Get()->IsChildOf(BaseInventoryClass);

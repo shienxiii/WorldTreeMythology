@@ -117,6 +117,17 @@ public:
 	 * @param InQueryEnum The enum for the custom query in uint8 type
 	 */
 	UFUNCTION(BlueprintNativeEvent) TArray<UInventoryEntry*> CustomQuery(uint8 InQueryEnum);
+
+	/**
+	 * Swaps the position of two InventoryEntry within this InventoryList.
+	 * Both InventoryEntry must be stored inside this InventoryList.
+	 * 
+	 * @param EntryA First entry to swap
+	 * @param EntryB Second entry to swap
+	 * 
+	 * @return Is swap successful?
+	 */
+	UFUNCTION(BlueprintCallable) bool Swap(UInventoryEntry* EntryA, UInventoryEntry* EntryB);
 	
 	/**
 	 * Gets the base class that all objects in this list should be derived from
