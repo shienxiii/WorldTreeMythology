@@ -9,22 +9,11 @@ UInventoryPage::UInventoryPage(const FObjectInitializer& ObjectInitializer) : Su
 	NavigationDelegate.BindUFunction(this, TEXT("NavigatePanel"));
 }
 
-UInventoryPage::~UInventoryPage()
-{
-	UE_LOG(LogTemp, Warning, TEXT("Page %s destructor"), *(GetFName().ToString()));
-}
-
 void UInventoryPage::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
 	SetupNavigation();
-}
-
-void UInventoryPage::NativeDestruct()
-{
-	Super::NativeDestruct();
-	UE_LOG(LogTemp, Warning, TEXT("%s destruct"), *(GetFName().ToString()));
 }
 
 void UInventoryPage::SetIndex(int32 InIndex)

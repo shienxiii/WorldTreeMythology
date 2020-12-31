@@ -25,11 +25,8 @@ protected:
 	FCustomWidgetNavigationDelegate NavigationDelegate;
 public:
 	UInventoryPage(const FObjectInitializer& ObjectInitializer);
-	~UInventoryPage();
 
 	void NativeOnInitialized() override;
-	void NativeDestruct() override;
-	//void ReleaseSlateResources(bool bReleaseChildren) override;
 
 	void SetIndex(int32 InIndex = 0) override;
 

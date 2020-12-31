@@ -4,24 +4,32 @@
 #include "InventoryComponent.h"
 
 // Sets default values for this component's properties
-UInventoryComponent::UInventoryComponent()
+UInventoryComponent::UInventoryComponent(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
 	bWantsInitializeComponent = true;
-
-	// ...
 }
 
 void UInventoryComponent::InitializeComponent()
 {
 	Super::InitializeComponent();
+
+	for (TSubclassOf<UInventoryList> list : InventoryLists)
+	{
+		AddInventoryListType(list);
+	}
 }
 
 void UInventoryComponent::AddInventoryListType(TSubclassOf<UInventoryList> InInventoryList)
 {
 	if (!InInventoryList) { return; }
+
+	UInventoryList** duplicate = Inventory.FindByPredicate([InInventoryList](UInventoryList* list)
+		{
+			return list->IsA(InInventoryList);
+		});
 
 	int32 i = Inventory.Add(NewObject<UInventoryList>((UObject*)GetTransientPackage(), InInventoryList));
 	Inventory[i]->SetIsStorage(bIsStorage);

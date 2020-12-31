@@ -3,20 +3,12 @@
 
 #include "InventoryPanelScroll.h"
 
-void UInventoryPanelScroll::NativeOnInitialized()
-{
-	Super::NativeOnInitialized();
-	UE_LOG(LogTemp, Warning, TEXT("NativeOnInitialized"));
-}
-
 void UInventoryPanelScroll::NativeDestruct()
 {
 	Super::NativeDestruct();
 	Panel->ClearChildren();
-	
-	UE_LOG(LogTemp, Warning, TEXT("NativeDestruct"));
 
-	GetWorld()->ForceGarbageCollection(true);
+	GEngine->PerformGarbageCollectionAndCleanupActors();
 }
 
 void UInventoryPanelScroll::SetupNavigation(UWidget* InWidget)
@@ -44,9 +36,6 @@ void UInventoryPanelScroll::RefreshPanel(TArray<UInventoryEntry*> InQuery)
 	{
 		entry->RefreshQuery(InQuery);
 	}
-
-	UE_LOG(LogTemp, Warning, TEXT("PanelCount %d"), Panel->GetChildrenCount());
-	UE_LOG(LogTemp, Warning, TEXT("EntryCount %d"), Entries.Num());
 }
 
 void UInventoryPanelScroll::ResizePanel(int32 InEntryCount)
@@ -55,7 +44,6 @@ void UInventoryPanelScroll::ResizePanel(int32 InEntryCount)
 
 	if (InEntryCount < Panel->GetChildrenCount() && InEntryCount > MinEntryCount)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ResizeDown"));
 		// Panel is oversized
 		while (InEntryCount < Panel->GetChildrenCount() && Panel->GetChildrenCount() > MinEntryCount)
 		{
@@ -65,8 +53,7 @@ void UInventoryPanelScroll::ResizePanel(int32 InEntryCount)
 	}
 	else if (InEntryCount > Panel->GetChildrenCount() || MinEntryCount > Panel->GetChildrenCount())
 	{
-		//  MainPanel is undersized
-		UE_LOG(LogTemp, Warning, TEXT("ResizeUp"));
+		// Panel is undersized
 		while (InEntryCount > Panel->GetChildrenCount() || MinEntryCount > Panel->GetChildrenCount())
 		{
 			UWidget* widget = AddNewWidget();

@@ -18,7 +18,7 @@ class WORLDTREEMYTHOLOGY_API UInventoryComponent : public UActorComponent
 
 protected:
 	// List of InventoryList this InventoryComponent will contain
-	UPROPERTY(EditAnywhere, Category = "Inventory") TArray<TSubclassOf<UInventoryList>> InventoryLists;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Inventory") TArray<TSubclassOf<UInventoryList>> InventoryLists;
 
 	// Array of InventoryList managed by this class. Set which InventoryList will go here on InventoryListType 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Inventory") TArray<UInventoryList*> Inventory;
@@ -27,16 +27,19 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Inventory") bool bIsStorage = false;
 public:	
 	// Sets default values for this component's properties
-	UInventoryComponent();
+	UInventoryComponent(const FObjectInitializer& ObjectInitializer);
 	void InitializeComponent() override;
 
-	// Call at Construct script to initialize the InventoryList this InventoryComponent will have
 	UFUNCTION(BlueprintCallable) void AddInventoryListType(TSubclassOf<UInventoryList> InInventoryList);
+
 	UFUNCTION(BlueprintCallable) void SetIsStorage(bool InIsStorage = false);
 	
 	/**
 	 * Add Inventory to it's respective list. Added Inventory will be in their default base form.
 	 * If adding with unique trait, use AddByActor() instead, which will return the InventoryEntry created to add unique traits
+	 * 
+	 * @param InInventory Class refence of the InventoryObject to be added
+	 * @param InCount 
 	 * 
 	 * @return number of items not added to this InventoryComponent
 	 */
@@ -46,12 +49,11 @@ public:
 	 * Takes an InventoryObject actor and adds it an InventoryList
 	 * 
 	 * @param InInventory Reference to the InventoryObject actor
+	 * @param bDestroyActor Whether to destroy the actor if add is successful
 	 *
 	 * @return Reference to the InventoryEntry class created
 	 */
 	UFUNCTION(BlueprintCallable) UInventoryEntry* AddByActor(AInventoryObject* InInventory, bool bDestroyActor = true);
-
-	//UFUNCTION(BlueprintCallable) bool AddInventoryByEntry(UInventoryEntry* InInventoryEntry, bool b);
 
 
 #pragma region InventoryList

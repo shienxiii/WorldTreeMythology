@@ -22,7 +22,6 @@ protected:
 		UScrollBox* Panel;
 
 protected:
-	void NativeOnInitialized() override;
 	void NativeDestruct() override;
 
 	void SetupNavigation(UWidget* InWidget);

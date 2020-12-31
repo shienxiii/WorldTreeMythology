@@ -66,8 +66,6 @@ UInventoryEntry* UInventoryList::AddSingle(TSubclassOf<AInventoryObject> InClass
 	{
 		if (UInventoryEntry* entry = GetEntryFor(InClass))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Adding to existing entry"));
-
 			return entry->Add(1) == 0 ? entry : nullptr;
 		}
 	}
@@ -78,15 +76,6 @@ UInventoryEntry* UInventoryList::AddSingle(TSubclassOf<AInventoryObject> InClass
 		{
 			return entry->GetInventoryClass() == NULL;
 		});
-
-	if (i == INDEX_NONE)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Adding to empty slot"));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("creating new entry"));
-	}
 
 	UInventoryEntry* entry = i != INDEX_NONE ? Inventory[i] : CreateNewEntries();
 
@@ -117,7 +106,6 @@ int32 UInventoryList::AddMultiple(TSubclassOf<AInventoryObject> InClass, int32 I
 	// Find the entry which holds InClass
 	if(UInventoryEntry* entry = GetEntryFor(InClass))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Adding to existing entry"));
 		// Entry found, simply add InCount to it
 		return entry->Add(InCount);
 	}
@@ -132,13 +120,11 @@ int32 UInventoryList::AddMultiple(TSubclassOf<AInventoryObject> InClass, int32 I
 
 	if (i != INDEX_NONE)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Adding to empty slot"));
 		// Found empty InventoryEntry, initialize the Entry and call it's Add
 		Inventory[i]->InitializeEntry(InClass, 0);
 	}
 #pragma endregion
-	
-	UE_LOG(LogTemp, Warning, TEXT("creating new entry"));
+
 	UInventoryEntry* entry = CreateNewEntries();
 	entry->InitializeEntry(InClass, 0);
 
@@ -209,7 +195,7 @@ bool UInventoryList::Swap(UInventoryEntry* EntryA, UInventoryEntry* EntryB)
 			return entry == EntryB;
 		});
 
-	if (!a || !b) { return false; }
+	if (a == INDEX_NONE || b == INDEX_NONE) { return false; }
 
 	Inventory.Swap(a, b);
 	return true;

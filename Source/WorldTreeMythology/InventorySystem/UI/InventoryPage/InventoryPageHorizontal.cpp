@@ -18,7 +18,6 @@ TSharedRef<SWidget> UInventoryPageHorizontal::RebuildWidget()
 
     if (Entries.Num() > 0)
     {
-        UE_LOG(LogTemp, Warning, TEXT("Clearing Entries"));
         Entries.Empty();
     }
 

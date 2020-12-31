@@ -21,12 +21,9 @@ void UInventoryPanelBase::NativePreConstruct()
 {
 	Super::NativePreConstruct();
 
-	UE_LOG(LogTemp, Warning, TEXT("NativePreConstruct"));
-
 	// The purpose of this block of code is only to preview on the UMG editor
 	if (!bIsInitialized)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("NativePreConstruct run initialization"));
 		ResizePanel(MinEntryCount);
 
 		return;
@@ -39,7 +36,6 @@ void UInventoryPanelBase::NativePreConstruct()
 
 void UInventoryPanelBase::NativeDestruct()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Panel %s NativeDestruct"), *(GetFName().ToString()));
 	Super::NativeDestruct();
 	ClearFocusedWidget();
 	Entries.Empty();
@@ -50,7 +46,7 @@ UInventoryWidget* UInventoryPanelBase::AddNewWidget()
 	if (!InventoryWidgetClass) { return nullptr; }
 
 	int i = Entries.Add(CreateWidget<UInventoryWidget>(GetWorld(), InventoryWidgetClass));
-	//WidgetTree->ConstructWidget<UWidget>(InChildClass);
+
 	Entries[i]->SetIndex(i);
 
 	// Bind Callback Event
@@ -89,7 +85,7 @@ int32 UInventoryPanelBase::GetEntryIndex(UInventoryWidget* InWidget)
 void UInventoryPanelBase::QueryForList(TSubclassOf<AInventoryObject> InInventoryClass)
 {
 	if (!InventoryComponent) { return; }
-	UE_LOG(LogTemp, Warning, TEXT("QueryForList"));
+
 	RefreshPanel(InventoryComponent->QueryByBaseClass(InInventoryClass));
 }
 
@@ -107,7 +103,7 @@ void UInventoryPanelBase::NativeEntryClickEvent(UInventoryEntry* InEntry)
 
 UWidget* UInventoryPanelBase::NavigatePanel(EUINavigation InNavigation)
 {
-	//if (!FocusedEntry) { return nullptr; }
+	if (!FocusedEntry) { return nullptr; }
 
 	int32 prevIndex = GetEntryIndex(FocusedEntry);
 	int32 nextIndex = prevIndex;
@@ -154,12 +150,11 @@ UWidget* UInventoryPanelBase::NavigatePanel(EUINavigation InNavigation)
 void UInventoryPanelBase::ClearFocusedWidget()
 {
 	FocusedEntry = nullptr;
-	UE_LOG(LogTemp, Warning, TEXT("Clearing Panel focus"));
+
 	if (InventoryWidgetClass.Get()->IsChildOf<UInventoryButton>()) { return; }
 
 	for (UInventoryWidget* entry : Entries)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Clearing Page focus"));
 		Cast<UInventoryPage>(entry)->ClearFocusedWidget();
 	}
 }
@@ -171,11 +166,6 @@ FReply UInventoryPanelBase::NativeOnFocusReceived(const FGeometry& InGeometry, c
 	if (FocusedEntry)
 	{
 		FString name = FocusedEntry->GetFName().ToString();
-		UE_LOG(LogTemp, Warning, TEXT("Focus on : %s"), *name);
-		if (FocusedEntry->bIsFocusable)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("focusable"));
-		}
 
 		FocusedEntry->SetFocus();
 	}
