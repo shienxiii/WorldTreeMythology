@@ -56,15 +56,15 @@ bool UInventoryList::RemoveEntries()
 	return true;
 }
 
-UInventoryEntry* UInventoryList::AddSingle(TSubclassOf<AInventoryObject> InClass)
+UInventoryEntry* UInventoryList::AddSingle(TSubclassOf<AInventoryObject> InInventoryClass)
 {
-	// Test InClass eligibility
-	if (!CanStore(InClass) || !CanAddToList()) { return nullptr; }
+	// Test InInventoryClass eligibility
+	if (!CanStore(InInventoryClass) || !CanAddToList()) { return nullptr; }
 
 #pragma region FindExistingEntry
 	if (!bUniqueEntries)
 	{
-		if (UInventoryEntry* entry = GetEntryFor(InClass))
+		if (UInventoryEntry* entry = GetEntryFor(InInventoryClass))
 		{
 			return entry->Add(1) == 0 ? entry : nullptr;
 		}
@@ -79,22 +79,22 @@ UInventoryEntry* UInventoryList::AddSingle(TSubclassOf<AInventoryObject> InClass
 
 	UInventoryEntry* entry = i != INDEX_NONE ? Inventory[i] : CreateNewEntries();
 
-	entry->InitializeEntry(InClass);
+	entry->InitializeEntry(InInventoryClass);
 
 	return entry;
 }
 
-int32 UInventoryList::AddMultiple(TSubclassOf<AInventoryObject> InClass, int32 InCount)
+int32 UInventoryList::AddMultiple(TSubclassOf<AInventoryObject> InInventoryClass, int32 InCount)
 {
-	// Test InClass eligibility and whether this list can run this function
-	if (!CanStore(InClass) || !CanAddToList()) { return InCount; }
+	// Test InInventoryClass eligibility and whether this list can run this function
+	if (!CanStore(InInventoryClass) || !CanAddToList()) { return InCount; }
 
 
 	if (bUniqueEntries)
 	{
 		int32 excess = InCount;
 
-		while (excess > 0 && AddSingle(InClass))
+		while (excess > 0 && AddSingle(InInventoryClass))
 		{
 			excess--;
 		}
@@ -103,8 +103,8 @@ int32 UInventoryList::AddMultiple(TSubclassOf<AInventoryObject> InClass, int32 I
 	}
 
 #pragma region FindExistingEntry
-	// Find the entry which holds InClass
-	if(UInventoryEntry* entry = GetEntryFor(InClass))
+	// Find the entry which holds InInventoryClass
+	if(UInventoryEntry* entry = GetEntryFor(InInventoryClass))
 	{
 		// Entry found, simply add InCount to it
 		return entry->Add(InCount);
@@ -121,12 +121,12 @@ int32 UInventoryList::AddMultiple(TSubclassOf<AInventoryObject> InClass, int32 I
 	if (i != INDEX_NONE)
 	{
 		// Found empty InventoryEntry, initialize the Entry and call it's Add
-		Inventory[i]->InitializeEntry(InClass, 0);
+		Inventory[i]->InitializeEntry(InInventoryClass, 0);
 	}
 #pragma endregion
 
 	UInventoryEntry* entry = CreateNewEntries();
-	entry->InitializeEntry(InClass, 0);
+	entry->InitializeEntry(InInventoryClass, 0);
 
 	return entry->Add(InCount);
 }
@@ -149,32 +149,32 @@ TArray<UInventoryEntry*> UInventoryList::QueryForAll(bool bClearEmptyEntries)
 		});
 }
 
-UInventoryEntry* UInventoryList::GetEntryFor(TSubclassOf<AInventoryObject> InSubclass)
+UInventoryEntry* UInventoryList::GetEntryFor(TSubclassOf<AInventoryObject> InInventoryClass)
 {
-	UInventoryEntry** entry = Inventory.FindByPredicate([InSubclass](UInventoryEntry* entry)
+	UInventoryEntry** entry = Inventory.FindByPredicate([InInventoryClass](UInventoryEntry* entry)
 								{
-									return entry->GetInventoryClass() == InSubclass;
+									return entry->GetInventoryClass() == InInventoryClass;
 								}
 	);
 
 	return entry ? *entry : nullptr;
 }
 
-TArray<UInventoryEntry*> UInventoryList::QueryBySubclass(TSubclassOf<AInventoryObject> InSubclass)
+TArray<UInventoryEntry*> UInventoryList::QueryBySubclass(TSubclassOf<AInventoryObject> InInventoryClass)
 {
-	if (InSubclass == NULL)
+	if (InInventoryClass == NULL)
 	{
-		InSubclass = BaseInventoryClass;
+		InInventoryClass = BaseInventoryClass;
 	}
-	else if (!CanStore(InSubclass))
+	else if (!CanStore(InInventoryClass))
 	{
 		return TArray<UInventoryEntry*>();
 	}
 
 
-	return Inventory.FilterByPredicate([InSubclass](UInventoryEntry* entry)
+	return Inventory.FilterByPredicate([InInventoryClass](UInventoryEntry* entry)
 		{
-			return entry->IsChildOf(InSubclass);
+			return entry->IsChildOf(InInventoryClass);
 		});
 }
 

@@ -43,7 +43,7 @@ public:
 	 * 
 	 * @return number of items not added to this InventoryComponent
 	 */
-	UFUNCTION(BlueprintCallable) int32 AddBySubclass(TSubclassOf<AInventoryObject> InInventory, int32 InCount = 1);
+	UFUNCTION(BlueprintCallable) int32 AddBySubclass(TSubclassOf<AInventoryObject> InInventoryClass, int32 InCount = 1);
 
 	/**
 	 * Takes an InventoryObject actor and adds it an InventoryList
@@ -53,28 +53,50 @@ public:
 	 *
 	 * @return Reference to the InventoryEntry class created
 	 */
-	UFUNCTION(BlueprintCallable) UInventoryEntry* AddByActor(AInventoryObject* InInventory, bool bDestroyActor = true);
+	UFUNCTION(BlueprintCallable) UInventoryEntry* AddByActor(AInventoryObject* InInventoryClass, bool bDestroyActor = true);
 
 
 #pragma region InventoryList
 	/**
-	 * Queries this InventoryComponent for all the InventoryEntry that holds a subclass of an InventoryObject
+	 * Queries this InventoryComponent for all the InventoryEntry that holds a subclass of an InventoryObject.
 	 * 
-	 * @param InInventoryClass The base class of the InventoryObject
-	 * @param bEmptyEntries Whether to return a InventoryEntry that holds nothing
+	 * @param InInventoryClass The base class of the InventoryObject.
+	 * @param bEmptyEntries Whether to return a InventoryEntry that holds nothing.
 	 * 
-	 * @return List of InventoryEntry based on the parameter set
+	 * @return List of InventoryEntry based on the parameter set.
 	 */
 	UFUNCTION(BlueprintCallable) TArray<UInventoryEntry*> QueryByBaseClass(TSubclassOf<AInventoryObject> InInventoryClass, bool bClearEmptyEntries = false);
 
 
-	UFUNCTION(BlueprintCallable) TArray<UInventoryEntry*> QueryBySubclass(TSubclassOf<AInventoryObject> InSubclass);
+	UFUNCTION(BlueprintCallable) TArray<UInventoryEntry*> QueryBySubclass(TSubclassOf<AInventoryObject> InInventoryClass);
 	UFUNCTION(BlueprintCallable) TArray<UInventoryEntry*> CustomQuery(TSubclassOf<AInventoryObject> InInventoryClass, uint8 InQueryEnum);
 
 	/**
-	 * Gets the InventoryList that can store the InventoryClass parameter
+	 * Query this InventoryComponent for the number of InventoryObject held.
+	 * 
+	 * @param InInventoryClass InventoryObject to look for. Must be the exact InventoryObject.
+	 * 
+	 * @return Number of queried InventoryObject held. returns INDEX_NONE if this InventoryComponent cannot hold the queried InventoryObject.
+	 */
+	UFUNCTION(BlueprintPure) int32 CountInventory(TSubclassOf<AInventoryObject> InInventoryClass);
+
+	/**
+	 * Gets the first InventoryList that can store the InventoryClass parameter.
+	 * 
+	 * @param InInventoryClass InventoryObject to look for.
+	 * 
+	 * @return The list that can hold the InventoryObject.
 	 */
 	UFUNCTION(BlueprintCallable) UInventoryList* GetInventoryListFor(TSubclassOf<AInventoryObject> InInventoryClass);
+
+	/**
+	 * Gets all the InventoryList that can store the InventoryClass parameter.
+	 *
+	 * @param InInventoryClass InventoryObject to look for.
+	 *
+	 * @return All the list that can hold the InventoryObject.
+	 */
+	UFUNCTION(BlueprintCallable) TArray<UInventoryList*> GetInventoryListsFor(TSubclassOf<AInventoryObject> InInventoryClass);
 
 #pragma endregion
 };

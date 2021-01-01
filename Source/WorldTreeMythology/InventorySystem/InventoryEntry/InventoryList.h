@@ -64,7 +64,7 @@ public:
 	 * 
 	 * @return Reference to the entry of the added inventory
 	 */
-	UFUNCTION(BlueprintCallable) UInventoryEntry* AddSingle(TSubclassOf<AInventoryObject> InClass);
+	UFUNCTION(BlueprintCallable) UInventoryEntry* AddSingle(TSubclassOf<AInventoryObject> InInventoryClass);
 
 	/**
 	 * Adds InCount number of the passed Inventory class and returns the assigned InventoryEntry if successful.
@@ -72,7 +72,7 @@ public:
 	 * 
 	 * @return Reference to the entry of the added inventory
 	 */
-	UFUNCTION(BlueprintCallable) int32 AddMultiple(TSubclassOf<AInventoryObject> InClass, int32 InCount = 1);
+	UFUNCTION(BlueprintCallable) int32 AddMultiple(TSubclassOf<AInventoryObject> InInventoryClass, int32 InCount = 1);
 
 	/**
 	 * Takes a single InventoryObject actor reference and adds it to this InventoryList.
@@ -101,7 +101,7 @@ public:
 
 
 	//Find and returns the first InventoryEntry that holds the subclass
-	UInventoryEntry* GetEntryFor(TSubclassOf<AInventoryObject> InSubclass);
+	UInventoryEntry* GetEntryFor(TSubclassOf<AInventoryObject> InInventoryClass);
 
 	/**
 	 * Queries the list for InventoryObject that are derived from a subclass.
@@ -109,7 +109,7 @@ public:
 	 * 
 	 * @param InSubclass Subclass of the Inventory to return.
 	 */
-	TArray<UInventoryEntry*> QueryBySubclass(TSubclassOf<AInventoryObject> InSubclass = NULL);
+	TArray<UInventoryEntry*> QueryBySubclass(TSubclassOf<AInventoryObject> InInventoryClass = NULL);
 
 	/**
 	 * BP overriden function to allow custom made query to work seamlessly with InventoryComponent

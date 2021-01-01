@@ -3,12 +3,12 @@
 
 #include "InventoryEntry.h"
 
-bool UInventoryEntry::InitializeEntry_Implementation(TSubclassOf<AInventoryObject> InClass, int32 InCount)
+bool UInventoryEntry::InitializeEntry_Implementation(TSubclassOf<AInventoryObject> InInventoryClass, int32 InCount)
 {
     // Only initialize if InventoryClass is NULL
     if (InventoryClass) { return false; }
 
-    InventoryClass = InClass;
+    InventoryClass = InInventoryClass;
     Count = InCount;
 
     return true;

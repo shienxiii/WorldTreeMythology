@@ -43,35 +43,31 @@ void UInventoryComponent::SetIsStorage(bool InIsStorage)
 	}
 }
 
-int32 UInventoryComponent::AddBySubclass(TSubclassOf<AInventoryObject> InInventory, int32 InCount)
+int32 UInventoryComponent::AddBySubclass(TSubclassOf<AInventoryObject> InInventoryClass, int32 InCount)
 {
-	UInventoryList* list = GetInventoryListFor(InInventory);
+	UInventoryList* list = GetInventoryListFor(InInventoryClass);
 
 	if (!list) { return InCount; }
 
-	return list->AddMultiple(InInventory, InCount);
+	return list->AddMultiple(InInventoryClass, InCount);
 }
 
-UInventoryEntry* UInventoryComponent::AddByActor(AInventoryObject* InInventory, bool bDestroyActor)
+UInventoryEntry* UInventoryComponent::AddByActor(AInventoryObject* InInventoryClass, bool bDestroyActor)
 {
-	UInventoryList* list = GetInventoryListFor(InInventory->GetClass());
+	UInventoryList* list = GetInventoryListFor(InInventoryClass->GetClass());
 
 	if (!list) { return nullptr; }
 
-	UInventoryEntry* entry = list->AddByActor(InInventory);
+	UInventoryEntry* entry = list->AddByActor(InInventoryClass);
 
-	if (bDestroyActor) { InInventory->Destroy(); }
+	if (bDestroyActor) { InInventoryClass->Destroy(); }
 
 	return entry;
 }
 
 TArray<UInventoryEntry*> UInventoryComponent::QueryByBaseClass(TSubclassOf<AInventoryObject> InInventoryClass, bool bClearEmptyEntries)
 {
-	TArray<UInventoryList*> lists = Inventory.FilterByPredicate([InInventoryClass](UInventoryList* list)
-		{
-			return list->GetBaseInventoryClass().Get()->IsChildOf(InInventoryClass);
-		}
-	);
+	TArray<UInventoryList*> lists = GetInventoryListsFor(InInventoryClass);
 
 	TArray<UInventoryEntry*> entries;
 
@@ -83,13 +79,13 @@ TArray<UInventoryEntry*> UInventoryComponent::QueryByBaseClass(TSubclassOf<AInve
 	return entries;
 }
 
-TArray<UInventoryEntry*> UInventoryComponent::QueryBySubclass(TSubclassOf<AInventoryObject> InSubclass)
+TArray<UInventoryEntry*> UInventoryComponent::QueryBySubclass(TSubclassOf<AInventoryObject> InInventoryClass)
 {
-	UInventoryList* list = GetInventoryListFor(InSubclass);
+	UInventoryList* list = GetInventoryListFor(InInventoryClass);
 
 	if (!list) { return TArray<UInventoryEntry*>(); }
 
-	return list->QueryBySubclass(InSubclass);
+	return list->QueryBySubclass(InInventoryClass);
 }
 
 TArray<UInventoryEntry*> UInventoryComponent::CustomQuery(TSubclassOf<AInventoryObject> InInventoryClass, uint8 InQueryEnum)
@@ -101,6 +97,34 @@ TArray<UInventoryEntry*> UInventoryComponent::CustomQuery(TSubclassOf<AInventory
 	return list->CustomQuery(InQueryEnum);
 }
 
+int32 UInventoryComponent::CountInventory(TSubclassOf<AInventoryObject> InInventoryClass)
+{
+	TArray<UInventoryList*> lists = GetInventoryListsFor(InInventoryClass);
+
+	if (lists.Num() == 0) { return INDEX_NONE; }
+
+	int32 count = 0;
+
+	for (UInventoryList* list : lists)
+	{
+
+		TArray<UInventoryEntry*> entries = list->QueryBySubclass(InInventoryClass);
+
+		if (list->IsUniqueEntriesList())
+		{
+			count += entries.Num();
+		}
+		else
+		{
+			for (UInventoryEntry* entry : entries)
+			{
+				count += entry->GetCount();
+			}
+		}
+	}
+	return count;
+}
+
 UInventoryList* UInventoryComponent::GetInventoryListFor(TSubclassOf<AInventoryObject> InInventoryClass)
 {
 	UInventoryList** listRef = Inventory.FindByPredicate([InInventoryClass](UInventoryList* list)
@@ -109,4 +133,13 @@ UInventoryList* UInventoryComponent::GetInventoryListFor(TSubclassOf<AInventoryO
 		});
 
 	return listRef ? *listRef : nullptr;
+}
+
+TArray<UInventoryList*> UInventoryComponent::GetInventoryListsFor(TSubclassOf<AInventoryObject> InInventoryClass)
+{
+	return Inventory.FilterByPredicate([InInventoryClass](UInventoryList* list)
+		{
+			return list->GetBaseInventoryClass().Get()->IsChildOf(InInventoryClass);
+		}
+	);
 }
