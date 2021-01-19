@@ -44,10 +44,12 @@ public:
 };
 
 // This class does not need to be modified.
-UINTERFACE(MinimalAPI)
+UINTERFACE(BlueprintType, MinimalAPI)
 class UInteractionInterface : public UInterface
 {
 	GENERATED_BODY()
+
+
 };
 
 /**
@@ -56,6 +58,8 @@ class UInteractionInterface : public UInterface
 class WORLDTREEMYTHOLOGY_API IInteractionInterface
 {
 	GENERATED_BODY()
+
+protected:
 
 public:
 	virtual FString GetInteractionName() { return "Interact"; }

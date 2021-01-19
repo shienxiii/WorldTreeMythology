@@ -114,7 +114,7 @@ public:
 	void Construct(const FArguments& InArgs);
 
 	/** @return True if this widget hovered */
-	virtual bool IsHovered() const
+	bool IsHovered() const override
 	{
 		return bIsHovered || bIsFocused;
 	}
